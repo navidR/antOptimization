@@ -13,8 +13,8 @@
 #define RECT_ 6
 
 
-char *mainwin_title = "Main Window";
-char *graphwin_title = "Graph Window";
+const char *mainwin_title = "Main Window";
+const char *graphwin_title = "Graph Window";
 static cairo_surface_t *surface = NULL;
 
 
@@ -128,8 +128,8 @@ int main(int argc , char **argv){
 	gtk_window_set_title(GTK_WINDOW(graphwin),graphwin_title);
 	gtk_widget_set_size_request(graphwin,GRAPH_WIN_WIDTH,GRAPH_WIN_HEIGHT);
 	gtk_widget_set_size_request(mainwin,MAIN_WIN_WIDTH,MAIN_WIN_HEIGHT);
-	gtk_window_set_resizable(mainwin,RESIZABLE);
-	gtk_window_set_resizable(graphwin,RESIZABLE);
+	gtk_window_set_resizable(GTK_WINDOW(mainwin),RESIZABLE);
+	gtk_window_set_resizable(GTK_WINDOW(graphwin),RESIZABLE);
 	
 
 	frame = gtk_frame_new(NULL);

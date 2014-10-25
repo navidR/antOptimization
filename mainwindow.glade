@@ -70,21 +70,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="button_numofants">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="max_length">3</property>
-                <property name="width_chars">3</property>
-                <property name="value">20</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">6</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="label_numofvertices">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -148,46 +133,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="input_numofvertices">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="margin_right">3</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">8</property>
-                <property name="max_length">3</property>
-                <property name="width_chars">3</property>
-                <property name="input_purpose">digits</property>
-                <property name="climb_rate">1</property>
-                <property name="numeric">True</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinButton" id="spinbutton1">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="margin_left">1</property>
-                <property name="margin_right">3</property>
-                <property name="margin_top">12</property>
-                <property name="margin_bottom">10</property>
-                <property name="max_length">5</property>
-                <property name="width_chars">5</property>
-                <property name="input_purpose">digits</property>
-                <property name="numeric">True</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">2</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkToggleButton" id="button_drawing_mode">
                 <property name="label" translatable="yes">Drawing Mode for Graph Window</property>
                 <property name="visible">True</property>
@@ -236,21 +181,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="button_evaporation_rate">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="width_chars">3</property>
-                <property name="climb_rate">1</property>
-                <property name="numeric">True</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">7</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -281,6 +211,62 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">8</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="input_numofvertices">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+                <property name="margin_top">12</property>
+                <property name="margin_bottom">11</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="input_numofedges">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+                <property name="margin_top">8</property>
+                <property name="margin_bottom">7</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="input_numofants">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="input_evaporation_rate">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">7</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>

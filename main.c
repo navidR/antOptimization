@@ -12,9 +12,10 @@
 #define RESIZABLE FALSE
 #define RECT_ 6
 
-
+const char *mainwin_ui_name = "mainwindow.glade";
 const char *mainwin_title = "Main Window";
 const char *graphwin_title = "Graph Window";
+const char *mainwin_ui_frame_name = "frame_ui";
 static cairo_surface_t *surface = NULL;
 
 
@@ -77,7 +78,7 @@ on_delete_event(GtkWidget *widget,
 	/* ask from user , if he wants really quit then return FALSE , otherwise return TRUE , OK? */
 
 
-	return TRUE;
+	return FALSE;
 }
 
 static void
@@ -116,21 +117,35 @@ int main(int argc , char **argv){
 	GtkWidget *mainwin , *graphwin;
 	GtkWidget *frame;
 	GtkWidget *drawing_area;
+	GtkBuilder *builder;
+	GtkWidget *frame_from_ui;
+	GtkRequisition *minimum_size_for_frame_ui;
 	Mode mode = Vertex;
 
 	gtk_init(&argc,&argv);
 	
+	builder = gtk_builder_new();
+	gtk_builder_add_from_file(builder,mainwin_ui_name,NULL);
+	frame_from_ui = gtk_builder_get_object(builder,mainwin_ui_frame_name);
+	
 	mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	graphwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+	gtk_container_add(GTK_CONTAINER(mainwin),frame_from_ui);
 	
+	// getting preffered size from frame_from_ui for fixing size of mainwin currectly
+	minimum_size_for_frame_ui = malloc(sizeof(GtkRequisition));
+	gtk_widget_get_preferred_size(frame_from_ui,minimum_size_for_frame_ui,NULL);
+	// setting some options of graphwin and mainwin
 	gtk_window_set_title(GTK_WINDOW(mainwin),mainwin_title);
 	gtk_window_set_title(GTK_WINDOW(graphwin),graphwin_title);
 	gtk_widget_set_size_request(graphwin,GRAPH_WIN_WIDTH,GRAPH_WIN_HEIGHT);
-	gtk_widget_set_size_request(mainwin,MAIN_WIN_WIDTH,MAIN_WIN_HEIGHT);
+//	gtk_widget_set_size_request(mainwin,MAIN_WIN_WIDTH,MAIN_WIN_HEIGHT);
+	gtk_widget_set_size_request(mainwin,minimum_size_for_frame_ui->width,minimum_size_for_frame_ui->height);
 	gtk_window_set_resizable(GTK_WINDOW(mainwin),RESIZABLE);
 	gtk_window_set_resizable(GTK_WINDOW(graphwin),RESIZABLE);
 	
+
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(graphwin),GTK_SHADOW_IN);

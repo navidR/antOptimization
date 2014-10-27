@@ -3,7 +3,6 @@ src = main.c
 output = antGraph
 cflags = --std=c11
 
-
 compile:
 	gcc $(gtk_flag) $(cflags) -o $(output) $(src)
 run:

@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 
+// Defined Variable for program
 #define GRAPH_WIN_CONTAINER_BORDER_WIDTH 5
 #define GRAPH_WIN_WIDTH 1000
 #define GRAPH_WIN_HEIGHT 600
@@ -12,6 +13,16 @@
 #define RESIZABLE FALSE
 #define RECT_ 6
 #define RGB_SURFACE 1
+
+// used EVENT
+const char *EVENT_DESTROY = "destroy";
+const char *EVENT_CONFIGURE_EVENT = "configure-event";
+const char *EVENT_MOTION_NOTIFY_EVENT = "motion-notify-event";
+const char *EVENT_CLICKED = "clicked";
+const char *EVENT_DRAW = "draw";
+const char *EVENT_DELETE_EVENT = "delete-event";
+const char *EVENT_TOGGLED = "toggled";
+const char *EVENT_BUTTON_PRESS_EVENT = "button-press-event";
 
 
 // global strings
@@ -197,19 +208,19 @@ int main(int argc, char **argv)
 
 
 	// signals
-	g_signal_connect(mainwin, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	g_signal_connect(graphwin, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	g_signal_connect(graphwin, "configure-event", G_CALLBACK(on_configure_event), NULL);
-	g_signal_connect(drawing_area, "motion-notify-event",G_CALLBACK(on_motion_notify_event), NULL);
-	g_signal_connect(drawing_area, "button-press-event",G_CALLBACK(on_button_press_event), &mode);
-	g_signal_connect(drawing_area, "clicked", G_CALLBACK(on_clicked_drawing_area), NULL);
-	g_signal_connect(drawing_area, "draw", G_CALLBACK(on_draw), NULL);
+	g_signal_connect(mainwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(graphwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(graphwin, EVENT_CONFIGURE_EVENT, G_CALLBACK(on_configure_event), NULL);
+	g_signal_connect(drawing_area, EVENT_MOTION_NOTIFY_EVENT,G_CALLBACK(on_motion_notify_event), NULL);
+	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,G_CALLBACK(on_button_press_event), &mode);
+	g_signal_connect(drawing_area, EVENT_CLICKED, G_CALLBACK(on_clicked_drawing_area), NULL);
+	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);
 	// connecting signals and events
-	g_signal_connect(mainwin, "delete-event", G_CALLBACK(on_delete_event),NULL);
+	g_signal_connect(mainwin, EVENT_DELETE_EVENT, G_CALLBACK(on_delete_event),NULL);
 
 	// signal for object loaded from builder
-	g_signal_connect(button_drawing_mode,"toggled",G_CALLBACK(on_toggled),&mode);
-	g_signal_connect(button_solve_problem,"clicked",G_CALLBACK(on_clicked_button_solve_problem),NULL);
+	g_signal_connect(button_drawing_mode,EVENT_TOGGLED,G_CALLBACK(on_toggled),&mode);
+	g_signal_connect(button_solve_problem,EVENT_CLICKED,G_CALLBACK(on_clicked_button_solve_problem),NULL);
 	
 
 //      g_signal_connect(graphwin,"clicked",G_CALLBACK(graph_window_clicked),NULL);

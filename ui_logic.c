@@ -1,6 +1,7 @@
 // created by emacs {navid  oct 25 2014}
 
 #include <gtk/gtk.h>
+#include <glib.h>
 #include "ui_logic.h"
 #include "ui_signals.h"
 
@@ -17,8 +18,11 @@ int main(int argc, char **argv)
 	    *input_evaporation_rate;
 	GtkButton *button_solve_problem;
 	GtkToggleButton *button_drawing_mode;
-	Mode mode = Random;
 
+	ui_points = g_array_sized_new(TRUE,TRUE,sizeof(struct _points),RESERVED_SIZE_OF_ARRAY_POINTS);
+	if(!ui_points)
+		g_error("ui_points is null , fatal error in line:%d.",__LINE__);
+	Mode mode = Random;
 	gtk_init(&argc, &argv);
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, mainwin_ui_name, NULL);
@@ -50,7 +54,9 @@ int main(int argc, char **argv)
 	gtk_window_set_resizable(GTK_WINDOW(mainwin), RESIZABLE);
 	gtk_window_set_resizable(GTK_WINDOW(graphwin), RESIZABLE);
 	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(graphwin), GTK_SHADOW_IN);
+//	gtk_frame_set_shadow_type(GTK_FRAME(graphwin), GTK_SHADOW_IN);
+//	gtk_frame_set_shaddow only accept frame as first argumant , should not send window
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(graphwin), frame);
 
 	drawing_area = gtk_drawing_area_new();
@@ -69,9 +75,7 @@ int main(int argc, char **argv)
 	g_signal_connect(graphwin, EVENT_CONFIGURE_EVENT, G_CALLBACK(on_configure_event), NULL);
 	g_signal_connect(drawing_area, EVENT_MOTION_NOTIFY_EVENT,G_CALLBACK(on_motion_notify_event), NULL);
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,G_CALLBACK(on_button_press_event), &mode);
-	g_signal_connect(drawing_area, EVENT_CLICKED, G_CALLBACK(on_clicked_drawing_area), NULL);
 	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);
-	// connecting signals and events
 	g_signal_connect(mainwin, EVENT_DELETE_EVENT, G_CALLBACK(on_delete_event),NULL);
 
 	// signal for object loaded from builder

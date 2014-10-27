@@ -9,6 +9,8 @@
 #define RESIZABLE FALSE
 #define RECT_ 6
 #define RGB_SURFACE 1
+#define RESERVED_SIZE_OF_ARRAY_POINTS 20
+
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
@@ -40,3 +42,13 @@ const char *button_solve_problem_name = "button_solve_problem";
 static cairo_surface_t *surface = NULL;
 
 typedef enum { Vertex, Random } Mode;
+
+// structure for saving clicked points lcoation in drawing area
+struct _points{
+	int x_;
+	int y_;
+};
+// array of _points for tracking points
+static GArray *ui_points;
+
+

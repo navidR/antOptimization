@@ -1,8 +1,7 @@
 
-
 static void on_toggled(GtkToggleButton *button,gpointer data)
 {
-	g_warning("on_toggled\n");
+	g_debug("on_toggled");
 	gboolean g = gtk_toggle_button_get_active(button);
 	Mode *mode = data;
 	if(g)
@@ -31,7 +30,7 @@ static void clear_surface(void)
 static gboolean
 on_configure_event(GtkWidget * widget, GdkEventConfigure * event, gpointer data)
 {
-	g_warning("on_configure_event\n");
+	g_debug("on_configure_event");
 	if (surface)
 		cairo_surface_destroy(surface);
 	surface =
@@ -48,11 +47,9 @@ on_configure_event(GtkWidget * widget, GdkEventConfigure * event, gpointer data)
 static void draw_rectangle(GtkWidget * widget, gdouble x, gdouble y)
 {
 	cairo_t *cr;
-	g_warning("drawing here : (%f,%f)\n", x, y);
-	if (!surface) {
-		g_warning("fatal error in line:%d", __LINE__);
-		exit(1);
-	}
+	g_debug("drawing here : (%f,%f)", x, y);
+	if (!surface) 
+		g_error("surface is null , fatal error in line:%d", __LINE__);
 	cr = cairo_create(surface);
 	cairo_rectangle(cr, x, y, RECT_, RECT_);
 	cairo_fill(cr);
@@ -60,35 +57,39 @@ static void draw_rectangle(GtkWidget * widget, gdouble x, gdouble y)
 	gtk_widget_queue_draw_area(widget, x, y, RECT_, RECT_);
 }
 
-static gboolean
-on_delete_event(GtkWidget * widget, GdkEvent * event, gpointer data)
+static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event, gpointer data)
 {
-	g_warning("on_delete_event\n");
+	g_debug("on_delete_event");
 	/* ask from user , if he wants really quit then return FALSE , otherwise return TRUE , OK? */
 
 	return FALSE;
 }
 static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
 {
-	g_warning("clicked on problem solve button, not implemented yet\n");
+	g_debug("clicked on problem solve button, not implemented yet");
 	// TODO
 	// not implement yet
 }
 static void on_clicked_drawing_area(GtkWidget * widget, gpointer data)
 {
-	g_warning("from graph_window_clicked\n");
+	g_debug("from graph_window_clicked");
 
 }
 
-static gboolean
-on_button_press_event(GtkWidget * widget, GdkEventButton * event, gpointer data)
+
+// we send Mode as pointer in gpointer (3rd)
+static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event, gpointer pmode)
 {
-	g_warning("from on_button_press_event");
-	g_warning(" (%f,%f)\n", event->x, event->y);
-	Mode *mode = data;
-	if ((*mode) == Vertex) {
-		g_warning("should draw an rectangle\n");
+	g_debug("from on_button_press_event  (%d,%d)", (int) event->x, (int) event->y);
+	Mode *mode = pmode;
+	if ( *mode == Vertex) {
+		g_debug("create new item_loc and adding to array");
+		struct _points *item_loc = malloc(sizeof(struct _points));
+		item_loc->x_ = (int) event->x;
+		item_loc->y_ = (int) event->y;
+		g_array_append_val(ui_points,item_loc);
 		draw_rectangle(widget, event->x, event->y);
+		g_debug("number of elements in ui_points : %d",ui_points->len);
 	}
 
 	return TRUE;
@@ -98,7 +99,7 @@ static gboolean
 on_motion_notify_event(GtkWidget * widget,
 		       GdkEventMotion * event, gpointer data)
 {
-//      g_warning("from on_motion_notify_event (%f,%f)\n",event->x,event->y);
+//      g_debug("from on_motion_notify_event (%f,%f)\n",event->x,event->y);
 
 	return TRUE;
 }

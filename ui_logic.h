@@ -10,7 +10,7 @@
 #define RECT_ 6
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
-
+#define DISTANCE 50
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";

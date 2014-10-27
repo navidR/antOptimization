@@ -87,6 +87,18 @@ static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event
 		struct _points *item_loc = malloc(sizeof(struct _points));
 		item_loc->x_ = (int) event->x;
 		item_loc->y_ = (int) event->y;
+		for(int i = 0 ; i < ui_points->len ; i++){
+			struct _points *temp_item = g_array_index(ui_points,struct _points*,i);
+			if(abs(item_loc->x_ - temp_item->x_) < DISTANCE && abs(item_loc->y_ - temp_item->y_) < DISTANCE)
+			{
+				// there is no need for this debuging information
+				// g_debug("x-x is %d y-y is %d", abs(item_loc->x_ - temp_item->x_),abs(item_loc->y_ - temp_item->y_));
+				g_debug("on_button_press_event:already (%d,%d) there is point so close to this one (%d,%d)",temp_item->x_,temp_item->y_,item_loc->x_,item_loc->y_);
+				free(item_loc);
+				return TRUE;
+			}
+
+		}
 		g_array_append_val(ui_points,item_loc);
 		draw_rectangle(widget, event->x, event->y);
 		g_debug("number of elements in ui_points : %d",ui_points->len);

@@ -44,7 +44,6 @@ const char *mainwin_ui_name = "mainwindow.glade";
 const char *mainwin_title = "Main Window";
 const char *graphwin_title = "Graph Window";
 
-
 // global string , for loading ui file objects
 const char *mainwin_ui_frame_name = "frame_ui";
 const char *input_evaporation_rate_name = "input_evaporation_rate";
@@ -53,7 +52,8 @@ const char *input_numofvertices_name = "input_numofvertices";
 const char *input_numofedges_name = "input_numofedges";
 const char *button_drawing_mode_name = "button_drawing_mode";
 const char *button_solve_problem_name = "button_solve_problem";
-const char *button_generating_random_graph_name = "button_generating_random_graph";
+const char *button_generating_random_graph_name =
+    "button_generating_random_graph";
 
 // global variable
 static cairo_surface_t *surface = NULL;
@@ -61,18 +61,16 @@ static cairo_surface_t *surface = NULL;
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 
 // structure for saving clicked points lcoation in drawing area
-struct _points{
+struct _points {
 	gint x;
 	gint y;
 };
 
 // bag for keeping two item of _points
-struct _bag{
-	struct _points* first_item;
-	struct _points* second_item;
+struct _bag {
+	struct _points *first_item;
+	struct _points *second_item;
 } bag;
 
 // array of _points for tracking points
 static GArray *ui_points;
-
-

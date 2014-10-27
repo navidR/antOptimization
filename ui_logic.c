@@ -19,10 +19,10 @@ int main(int argc, char **argv)
 	GtkButton *button_solve_problem;
 	GtkToggleButton *button_drawing_mode;
 
-	ui_points = g_array_sized_new(TRUE,TRUE,sizeof(struct _points),RESERVED_SIZE_OF_ARRAY_POINTS);
+	ui_points = g_array_sized_new(FALSE,TRUE,sizeof(struct _points),RESERVED_SIZE_OF_ARRAY_POINTS);
 	if(!ui_points)
 		g_error("ui_points is null , fatal error in line:%d.",__LINE__);
-	Mode mode = Random;
+	_mode mode = Random;
 	gtk_init(&argc, &argv);
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, mainwin_ui_name, NULL);

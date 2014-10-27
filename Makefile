@@ -2,7 +2,7 @@ gtk_flag = $(shell pkg-config --cflags gtk+-3.0 --libs gtk+-3.0)
 src = ui_logic.c
 output = antGraph
 cflags = --std=c11
-debugflag = 
+debugflag = -g
 debugvariable = G_MESSAGES_DEBUG="all"
 production = -O3
 no-warning= -w

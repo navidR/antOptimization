@@ -8,9 +8,11 @@
 #define MAIN_WIN_HEIGHT 600
 #define RESIZABLE FALSE
 #define RECT_ 6
+#define HALF_RECT 3
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 50
+#define RED 0.99
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
@@ -41,13 +43,20 @@ const char *button_solve_problem_name = "button_solve_problem";
 // global variable
 static cairo_surface_t *surface = NULL;
 
-typedef enum { Vertex, Random } Mode;
+typedef enum { Vertex, Random } _mode;
 
 // structure for saving clicked points lcoation in drawing area
 struct _points{
-	int x_;
-	int y_;
+	gint x;
+	gint y;
 };
+
+// bag for keeping two item of _points
+struct _bag{
+	struct _points* first_item;
+	struct _points* second_item;
+} bag;
+
 // array of _points for tracking points
 static GArray *ui_points;
 

@@ -7,8 +7,9 @@
 #define MAIN_WIN_WIDTH 400
 #define MAIN_WIN_HEIGHT 600
 #define RESIZABLE FALSE
-#define RECT_ 6
-#define HALF_RECT 3
+#define RADIUS 4
+#define FIRST_ANGLE 0
+#define SECOND_ANGLE 8
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 50

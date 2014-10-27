@@ -6,10 +6,10 @@ static void draw_line(GtkWidget * widget){
 		g_error("draw_line:surface is null , fatal error in line:%d", __LINE__);
 	cr = cairo_create(surface);
 	g_debug("draw_line:line width : %f",cairo_get_line_width(cr));
-	cairo_move_to(cr,bag.first_item->x + HALF_RECT,bag.first_item->y + HALF_RECT);
-	cairo_line_to(cr,bag.second_item->x + HALF_RECT,bag.second_item->y + HALF_RECT);
+	cairo_move_to(cr,bag.first_item->x,bag.first_item->y);
+	cairo_line_to(cr,bag.second_item->x,bag.second_item->y);
 	cairo_stroke(cr);
-	cairo_rectangle(cr, bag.first_item->x, bag.first_item->y, RECT_, RECT_);
+	cairo_arc(cr,bag.first_item->x,bag.first_item->y,RADIUS,FIRST_ANGLE, SECOND_ANGLE);
 	cairo_fill(cr);
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
@@ -68,7 +68,7 @@ static void draw_rectangle(GtkWidget * widget, struct _points* item_loc , gboole
 	cr = cairo_create(surface);
 	if(status)
 		cairo_set_source_rgb(cr,RED,FALSE,FALSE);
-	cairo_rectangle(cr, item_loc->x, item_loc->y, RECT_, RECT_);
+	cairo_arc(cr,item_loc->x,item_loc->y,RADIUS,FIRST_ANGLE, SECOND_ANGLE);
 	cairo_fill(cr);
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
@@ -116,6 +116,7 @@ static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event
 					bag.second_item = temp_item;
 					draw_line(widget);
 					bag.first_item = bag.second_item;
+					draw_rectangle(widget,temp_item,TRUE);
 					bag.second_item = NULL;
 				}
 				return TRUE;
@@ -124,7 +125,7 @@ static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event
 		// we check if we have any selected item then free item and just return
 		if(bag.first_item != NULL){
 			g_debug("on_button_press_event:bag.first_item is selected but second item , not select currectly");
-			draw_rectangle(widget,&(bag.first_item),FALSE);
+			draw_rectangle(widget,bag.first_item,FALSE);
 			bag.first_item = NULL;
 			bag.second_item = NULL;
 			free(item_loc);

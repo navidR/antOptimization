@@ -5,6 +5,7 @@ static void draw_line(GtkWidget * widget){
 	if (!surface) 
 		g_error("draw_line:surface is null , fatal error in line:%d", __LINE__);
 	cr = cairo_create(surface);
+	cairo_set_line_width(cr,LINE_WIDTH);
 	g_debug("draw_line:line width : %f",cairo_get_line_width(cr));
 	cairo_move_to(cr,bag.first_item->x,bag.first_item->y);
 	cairo_line_to(cr,bag.second_item->x,bag.second_item->y);
@@ -80,6 +81,13 @@ static void draw_rectangle(GtkWidget * widget, struct _points* item_loc , gboole
 	if(status)
 		cairo_set_source_rgb(cr,RED,FALSE,FALSE);
 	cairo_arc(cr,item_loc->x,item_loc->y,RADIUS,FIRST_ANGLE, SECOND_ANGLE);
+/*
+	else
+		cairo_set_source_rgb(cr,FALSE,FALSE,FALSE);		
+	cairo_rectangle(cr, item_loc->x, item_loc->y, RECT_, RECT_);
+//	cairo_arc(cr,item_loc->x,item_loc->y,RADIUS,0, 0);
+>>>>>>> 7a242a0381c2a37f7dc1081f3aa36fb395f7c0fd
+ */
 	cairo_fill(cr);
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
@@ -133,6 +141,7 @@ static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event
 				// draw line , we a have a vertex selected already
 				else{
 					bag.second_item = temp_item;
+					draw_rectangle(widget,temp_item,TRUE);
 					draw_line(widget);
 					bag.first_item = bag.second_item;
 					draw_rectangle(widget,temp_item,TRUE);

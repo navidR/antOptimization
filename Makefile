@@ -17,3 +17,5 @@ debug:
 debug-warning:
 	gcc $(gtk_flag) $(cflags) $(debugflag) -o $(output) $(src)
 	$(debugvariable) ./$(output)
+clean:
+	rm antGraph

@@ -13,7 +13,7 @@
 #define SECOND_ANGLE 8
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
-#define DISTANCE 50
+#define DISTANCE 25
 #define RED 0.99
 #define MODE_INDEX 0
 #define SPIN_VERTEX_INDEX 1
@@ -26,6 +26,7 @@
 #define MIN_EVAPORATION_RATE 1
 #define MAX_EVAPORATION_RATE 100
 #define INCREMENT_RATE 1
+#define LINE_WIDTH 0.75
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";

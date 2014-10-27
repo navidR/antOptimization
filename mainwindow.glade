@@ -20,9 +20,8 @@
               <object class="GtkLabel" id="label0">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">14</property>
-                <property name="margin_right">26</property>
-                <property name="margin_top">7</property>
+                <property name="margin_right">46</property>
+                <property name="margin_top">14</property>
                 <property name="margin_bottom">15</property>
                 <property name="label" translatable="yes">Generate Random Graph </property>
                 <property name="max_width_chars">10</property>
@@ -39,7 +38,7 @@
               <object class="GtkLabel" id="label_ant_colony_title">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">18</property>
+                <property name="margin_left">14</property>
                 <property name="margin_right">38</property>
                 <property name="margin_top">16</property>
                 <property name="margin_bottom">16</property>
@@ -203,8 +202,8 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="margin_left">51</property>
-                <property name="margin_right">88</property>
+                <property name="margin_left">70</property>
+                <property name="margin_right">71</property>
                 <property name="margin_top">10</property>
                 <property name="margin_bottom">9</property>
               </object>
@@ -272,7 +271,20 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="button_generating_random_graph">
+                <property name="label" translatable="yes">Generate Random Graph</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="margin_left">25</property>
+                <property name="margin_right">10</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

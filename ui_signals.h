@@ -15,15 +15,26 @@ static void draw_line(GtkWidget * widget){
 	gtk_widget_queue_draw(widget);
 }
 
-static void on_toggled(GtkToggleButton *button,gpointer data)
+static void on_toggled_button_drawing_mode(GtkToggleButton *button,gpointer data)
 {
 	g_debug("on_toggled");
+	GPtrArray *widget_array = data;
 	gboolean g = gtk_toggle_button_get_active(button);
-	_mode *mode = data;
-	if(g)
-		*mode = Vertex;
-	else
-		*mode = Random;
+	GtkWidget *input_numofvertices,*input_numofedges;
+	_mode *mode = g_ptr_array_index(widget_array,MODE_INDEX);
+	input_numofvertices = g_ptr_array_index(widget_array,SPIN_VERTEX_INDEX);
+	input_numofedges = g_ptr_array_index(widget_array,SPIN_EDGE_INDEX);
+	if(g){
+		*mode = DRAWING_MODE;
+		gtk_widget_set_sensitive(input_numofvertices,FALSE);
+		gtk_widget_set_sensitive(input_numofedges,FALSE);
+	}
+	else{
+		*mode = RANDOM_MODE;
+		gtk_widget_set_sensitive(input_numofvertices,TRUE);
+		gtk_widget_set_sensitive(input_numofedges,TRUE);
+	}
+	
 }
 
 
@@ -81,6 +92,14 @@ static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event, gpointer d
 
 	return FALSE;
 }
+
+static void on_clicked_button_generating_random_graph(GtkWidget *widget,gpointer data){
+	g_debug("on_clicked_button_generating_random_graph:not implemented yet");
+	// TODO
+	// not implemented yet
+
+}
+
 static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
 {
 	g_debug("clicked on problem solve button, not implemented yet");
@@ -93,7 +112,7 @@ static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event
 {
 	g_debug("on_button_press_event:(%d,%d)", (int) event->x, (int) event->y);
 	_mode *mode = pmode;
-	if (*mode == Vertex) {
+	if (*mode == DRAWING_MODE) {
 		g_debug("on_button_press_event:new item_loc adding to ui_points->len : %d",ui_points->len);
 		struct _points *item_loc = malloc(sizeof(struct _points));
 		item_loc->x = (int) event->x;
@@ -148,3 +167,14 @@ on_motion_notify_event(GtkWidget * widget,
 	return TRUE;
 }
 
+static void on_value_changed_input_numofvertices(GtkSpinButton *widget,gpointer data)
+{
+	g_debug("on_value_changed_input_numofvertices");
+	GtkSpinButton *input_numofedges = data;
+	int min_numofedges = gtk_spin_button_get_value_as_int(widget);
+	int max_numofedges = ((min_numofedges * (min_numofedges - 1 )) / 2);
+	g_debug("on_value_changed_input_numofvertices:max_numofedges:%d",max_numofedges);
+	GtkAdjustment *adjustment_input_numofedges = gtk_adjustment_new(min_numofedges,min_numofedges,max_numofedges,INCREMENT_RATE,ZERO,ZERO);
+	gtk_spin_button_set_adjustment(input_numofedges,adjustment_input_numofedges);
+	gtk_spin_button_set_value(input_numofedges,min_numofedges);
+}

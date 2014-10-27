@@ -70,12 +70,6 @@ static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
 	// TODO
 	// not implement yet
 }
-static void on_clicked_drawing_area(GtkWidget * widget, gpointer data)
-{
-	g_debug("from graph_window_clicked");
-
-}
-
 
 // we send Mode as pointer in gpointer (3rd)
 static gboolean on_button_press_event(GtkWidget * widget, GdkEventButton * event, gpointer pmode)

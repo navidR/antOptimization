@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	_mode mode = RANDOM_MODE;
 
 	ui_points =
-	    g_array_sized_new(FALSE, TRUE, sizeof(struct _points),
+	    g_array_sized_new(FALSE, TRUE, sizeof(GdkPoint),
 			      RESERVED_SIZE_OF_ARRAY_POINTS);
 	if (!ui_points)
 		g_error("ui_points is null , fatal error in line:%d.",
@@ -67,6 +67,8 @@ int main(int argc, char **argv)
 	adjustment_input_numofvertices =
 	    gtk_adjustment_new(MIN_NUMOFVERTICES, MIN_NUMOFVERTICES,
 			       MAX_NUMOFVERTICES, INCREMENT_RATE, ZERO, ZERO);
+	// dont have any default value for edges 
+	// it should compute it everytime value get updated
 	adjustment_input_numofedges =
 	    gtk_adjustment_new(DEFAULT_NUMOFEDGES, DEFAULT_NUMOFEDGES, ZERO,
 			       ZERO, ZERO, ZERO);
@@ -85,6 +87,12 @@ int main(int argc, char **argv)
 				       adjustment_input_numofants);
 	gtk_spin_button_set_adjustment(input_evaporation_rate,
 				       adjustment_evaporation_rate);
+	
+	// set intputs to defaults value
+	gtk_spin_button_set_value(input_numofvertices, MIN_NUMOFVERTICES);
+	gtk_spin_button_set_value(input_numofedges, DEFAULT_NUMOFEDGES);
+	gtk_spin_button_set_value(input_numofants, MIN_NUMOFANTS);
+	gtk_spin_button_set_value(input_evaporation_rate, MIN_EVAPORATION_RATE);
 
 	// setting some options of graphwin and mainwin
 	gtk_window_set_title(GTK_WINDOW(mainwin), mainwin_title);
@@ -109,13 +117,28 @@ int main(int argc, char **argv)
 			      gtk_widget_get_events(drawing_area) |
 			      GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK);
 
+	// widget_array initialize
+	// passing array of {mode,GtkWidget(input_numofvertices),GtkWidget(input_numofedges)} to singal for GtkToggleButton
+	// MODE_INDEX 0
+	g_ptr_array_add(widget_array, &mode);
+	// INPUT_NUMOFVERTICES_INDEX = 1
+	g_ptr_array_add(widget_array, input_numofvertices);
+	// INPUT_NUMOFEDGES_INDEX = 2
+	g_ptr_array_add(widget_array, input_numofedges);
+	// INPUT_BUTTON_GENERATING_RANDOM_GRAPH = 3
+	g_ptr_array_add(widget_array, button_generating_random_graph);
+	// GRAPHWIN_INDEX = 4
+	g_ptr_array_add(widget_array, graphwin);
+	// DRAWING_AREA_INDEX = 5
+	g_ptr_array_add(widget_array, drawing_area);
+
 	// signals
 	g_signal_connect(mainwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
 			 NULL);
 	g_signal_connect(graphwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
 			 NULL);
 	g_signal_connect(graphwin, EVENT_CONFIGURE_EVENT,
-			 G_CALLBACK(on_configure_event), NULL);
+			 G_CALLBACK(on_configure_event), widget_array);
 	g_signal_connect(drawing_area, EVENT_MOTION_NOTIFY_EVENT,
 			 G_CALLBACK(on_motion_notify_event), NULL);
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,
@@ -123,12 +146,6 @@ int main(int argc, char **argv)
 	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);
 	g_signal_connect(mainwin, EVENT_DELETE_EVENT,
 			 G_CALLBACK(on_delete_event), NULL);
-
-	// widget_array initialize
-	// passing array of {mode,GtkWidget(input_numofvertices),GtkWidget(input_numofedges)} to singal for GtkToggleButton
-	g_ptr_array_add(widget_array, &mode);
-	g_ptr_array_add(widget_array, input_numofvertices);
-	g_ptr_array_add(widget_array, input_numofedges);
 
 	// signal for object loaded from builder
 	g_signal_connect(button_drawing_mode, EVENT_TOGGLED,
@@ -138,7 +155,7 @@ int main(int argc, char **argv)
 			 G_CALLBACK(on_clicked_button_solve_problem), NULL);
 	g_signal_connect(button_generating_random_graph, EVENT_CLICKED,
 			 G_CALLBACK(on_clicked_button_generating_random_graph),
-			 NULL);
+			 widget_array);
 	g_signal_connect(input_numofvertices, EVENT_VALUE_CHANGED,
 			 G_CALLBACK(on_value_changed_input_numofvertices),
 			 input_numofedges);

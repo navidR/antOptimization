@@ -21,24 +21,26 @@ static void draw_line(GtkWidget * widget)
 }
 
 static void on_toggled_button_drawing_mode(GtkToggleButton * button,
-					   gpointer data)
+					   GPtrArray *widget_array)
 {
 	g_debug("on_toggled");
-	GPtrArray *widget_array = data;
 	gboolean g = gtk_toggle_button_get_active(button);
-	GtkWidget *input_numofvertices, *input_numofedges;
+	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph;
 	_mode *mode = g_ptr_array_index(widget_array, MODE_INDEX);
 	input_numofvertices =
-	    g_ptr_array_index(widget_array, SPIN_VERTEX_INDEX);
-	input_numofedges = g_ptr_array_index(widget_array, SPIN_EDGE_INDEX);
+	    g_ptr_array_index(widget_array, INPUT_NUMOFVERTICES_INDEX);
+	input_numofedges = g_ptr_array_index(widget_array, INPUT_NUMOFEDGES_INDEX);
+	button_generating_random_graph = g_ptr_array_index(widget_array,BUTTON_GENERATING_RANDOM_GRAPH_INDEX);
 	if (g) {
 		*mode = DRAWING_MODE;
 		gtk_widget_set_sensitive(input_numofvertices, FALSE);
 		gtk_widget_set_sensitive(input_numofedges, FALSE);
+		gtk_widget_set_sensitive(button_generating_random_graph, FALSE);
 	} else {
 		*mode = RANDOM_MODE;
 		gtk_widget_set_sensitive(input_numofvertices, TRUE);
 		gtk_widget_set_sensitive(input_numofedges, TRUE);
+		gtk_widget_set_sensitive(button_generating_random_graph, TRUE);
 	}
 
 }
@@ -78,7 +80,7 @@ static gboolean on_configure_event(GtkWidget * widget,
 	return TRUE;
 }
 
-static void draw_rectangle(GtkWidget * widget, struct _points *item_loc,
+static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 			   gboolean status)
 {
 	cairo_t *cr;
@@ -105,12 +107,29 @@ static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event,
 }
 
 static void on_clicked_button_generating_random_graph(GtkWidget * widget,
-						      gpointer data)
+						      GPtrArray * widget_array)
 {
 	g_debug
 	    ("on_clicked_button_generating_random_graph:not implemented yet");
+	GtkWidget *input_numofvertices, *input_numofedges, *button_generating_random_graph, *graphwin, *drawing_area;
+	input_numofvertices = g_ptr_array_index(widget_array,INPUT_NUMOFVERTICES_INDEX);
+	input_numofedges = g_ptr_array_index(widget_array,INPUT_NUMOFEDGES_INDEX);
+	graphwin = g_ptr_array_index(widget_array,GRAPHWIN_INDEX);
+	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
+	numofvertices = gtk_spin_button_get_value_as_int(input_numofvertices);
+	numofedges = gtk_spin_button_get_value_as_int(input_numofedges);
+	g_debug("numofvertices is %d , numofedges is %d", numofvertices, numofedges);
+	if(surface)
+		cairo_surface_destroy(surface);
+	surface = gdk_window_create_similar_surface(gtk_widget_get_window(graphwin),
+						    CAIRO_CONTENT_COLOR,
+						    gtk_widget_get_allocated_width(graphwin),
+						    gtk_widget_get_allocated_height(graphwin));
+	clear_surface();
+	gtk_widget_queue_draw(drawing_area);
 	// TODO
 	// not implemented yet
+	
 
 }
 
@@ -131,12 +150,12 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		g_debug
 		    ("on_button_press_event:new item_loc adding to ui_points->len : %d",
 		     ui_points->len);
-		struct _points *item_loc = malloc(sizeof(struct _points));
+		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 		item_loc->x = (int)event->x;
 		item_loc->y = (int)event->y;
 		for (int i = 0; i < ui_points->len; i++) {
-			struct _points *temp_item =
-			    g_array_index(ui_points, struct _points *, i);
+			GdkPoint *temp_item =
+			    g_array_index(ui_points, GdkPoint* , i);
 			if (abs(item_loc->x - temp_item->x) < DISTANCE
 			    && abs(item_loc->y - temp_item->y) < DISTANCE) {
 				// there is no need for this debuging information
@@ -189,7 +208,6 @@ on_motion_notify_event(GtkWidget * widget,
 		       GdkEventMotion * event, gpointer data)
 {
 //      g_debug("from on_motion_notify_event (%f,%f)\n",event->x,event->y);
-
 	return TRUE;
 }
 

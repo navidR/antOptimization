@@ -16,8 +16,11 @@
 #define DISTANCE 25
 #define RED 0.99
 #define MODE_INDEX 0
-#define SPIN_VERTEX_INDEX 1
-#define SPIN_EDGE_INDEX 2
+#define INPUT_NUMOFVERTICES_INDEX 1
+#define INPUT_NUMOFEDGES_INDEX 2
+#define BUTTON_GENERATING_RANDOM_GRAPH_INDEX 3
+#define GRAPHWIN_INDEX 4
+#define DRAWING_AREA_INDEX 5
 #define MIN_NUMOFANTS 2
 #define MAX_NUMOFANTS 500
 #define MIN_NUMOFVERTICES 3
@@ -60,17 +63,15 @@ static cairo_surface_t *surface = NULL;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 
-// structure for saving clicked points lcoation in drawing area
-struct _points {
-	gint x;
-	gint y;
-};
-
 // bag for keeping two item of _points
 struct _bag {
-	struct _points *first_item;
-	struct _points *second_item;
+	GdkPoint *first_item;
+	GdkPoint *second_item;
 } bag;
 
 // array of _points for tracking points
 static GArray *ui_points;
+
+// main value's for graph's
+static int numofvertices = 0;
+static int numofedges = 0 ;

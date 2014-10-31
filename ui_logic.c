@@ -115,8 +115,8 @@ int main(int argc, char **argv)
 	gtk_container_add(GTK_CONTAINER(graphwin), frame);
 	drawing_area = gtk_drawing_area_new();
 	gtk_widget_get_size_request(frame,drawing_area_width,drawing_area_height);
-	g_debug("main:set drawing_area (width,height)->(drawing_area_width,drawing_area_height)");
-	gtk_widget_set_size_request(drawing_area,drawing_area_width,drawing_area_height);
+	g_debug("main:set drawing_area (width,height)->(%d,%d)",*drawing_area_width,*drawing_area_height);
+	gtk_widget_set_size_request(drawing_area,*drawing_area_width,*drawing_area_height);
 //	gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH,DRAWING_AREA_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 

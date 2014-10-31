@@ -8,13 +8,14 @@
 #define MAIN_WIN_WIDTH 400
 #define MAIN_WIN_HEIGHT 600
 #define RESIZABLE FALSE
-#define RADIUS 4
+#define RADIUS 5
 #define FIRST_ANGLE 0
 #define SECOND_ANGLE 8
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 25
 #define DISTANCE_FROM_BORDER 50
+#define DISTANCE_CLICK 5
 #define RED 0.99
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
@@ -31,6 +32,7 @@
 #define MAX_EVAPORATION_RATE 100
 #define INCREMENT_RATE 1
 #define LINE_WIDTH 0.75
+
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";

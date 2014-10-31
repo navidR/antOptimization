@@ -204,8 +204,8 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		for (int i = 0; i < ui_points->len; i++) {
 			GdkPoint *temp_item =
 			    g_array_index(ui_points, GdkPoint* , i);
-			if (abs(item_loc->x - temp_item->x) < DISTANCE
-			    && abs(item_loc->y - temp_item->y) < DISTANCE) {
+			if (abs(item_loc->x - temp_item->x) < DISTANCE_CLICK
+			    && abs(item_loc->y - temp_item->y) < DISTANCE_CLICK) {
 				// there is no need for this debuging information
 				// g_debug("x-x is %d y-y is %d", abs(item_loc->x_ - temp_item->x_),abs(item_loc->y_ - temp_item->y_));
 				g_debug

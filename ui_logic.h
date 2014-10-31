@@ -14,6 +14,7 @@
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 25
+#define DISTANCE_FROM_BORDER 50
 #define RED 0.99
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
@@ -60,8 +61,6 @@ const char *button_generating_random_graph_name =
 
 // global variable
 static cairo_surface_t *surface = NULL;
-// change to variable , change to gtk_widget_get_allocated_width & height
-static gint *drawing_area_width, *drawing_area_height;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 

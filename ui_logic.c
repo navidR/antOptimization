@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	    *adjustment_input_numofants, *adjustment_evaporation_rate,
 	    *adjustment_input_numofedges;
 	_mode mode = RANDOM_MODE;
-
+	
 	ui_points =
 	    g_array_sized_new(FALSE, TRUE, sizeof(GdkPoint),
 			      RESERVED_SIZE_OF_ARRAY_POINTS);
@@ -40,16 +40,12 @@ int main(int argc, char **argv)
 	mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	graphwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	// initialize drawing_area_width & height
-	drawing_area_width = malloc(sizeof(gint));
-	drawing_area_height = malloc(sizeof(gint));
-
 	// after loading frame_from_ui,load it to mainwin
 	frame_from_ui = gtk_builder_get_object(builder, mainwin_ui_frame_name);
 	gtk_container_add(GTK_CONTAINER(mainwin), frame_from_ui);
 
 	// getting preffered size from frame_from_ui for fixing size of mainwin currectly
-	minimum_size_for_frame_ui = malloc(sizeof(GtkRequisition));
+	minimum_size_for_frame_ui = g_new(GtkRequisition,1);
 	gtk_widget_get_preferred_size(frame_from_ui, minimum_size_for_frame_ui,
 				      NULL);
 
@@ -114,10 +110,6 @@ int main(int argc, char **argv)
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(graphwin), frame);
 	drawing_area = gtk_drawing_area_new();
-	gtk_widget_get_size_request(frame,drawing_area_width,drawing_area_height);
-	g_debug("main:set drawing_area (width,height)->(%d,%d)",*drawing_area_width,*drawing_area_height);
-	gtk_widget_set_size_request(drawing_area,*drawing_area_width,*drawing_area_height);
-//	gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH,DRAWING_AREA_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
 	// adding BUTTON PRESS AND MOTION MASK to gtk events

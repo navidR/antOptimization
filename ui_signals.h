@@ -112,6 +112,8 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	g_debug
 	    ("on_clicked_button_generating_random_graph");
 	GtkWidget *input_numofvertices, *input_numofedges, *button_generating_random_graph, *graphwin, *drawing_area;
+	GtkAllocation drawing_area_alloc;
+	gint numofedges_drew = 0;
 	input_numofvertices = g_ptr_array_index(widget_array,INPUT_NUMOFVERTICES_INDEX);
 	input_numofedges = g_ptr_array_index(widget_array,INPUT_NUMOFEDGES_INDEX);
 	graphwin = g_ptr_array_index(widget_array,GRAPHWIN_INDEX);
@@ -128,39 +130,44 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
 
+	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
+	g_debug("on_clicked_button_generating_random_graph:drawing_area (width,height)->(%d,%d)",drawing_area_alloc.width,drawing_area_alloc.height);
 	bag.first_item = NULL;
 	bag.second_item = NULL;
-	for(int i = 0; i < ui_points->len; i++){
+	for(int i = (ui_points->len - 1); i >= 0; i--){
 		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
-		g_array_remove_index(ui_points, i);
 		free(temp_item);
+		g_array_remove_index(ui_points, i);
 	}
 	srand(time(NULL));
 	for(int i = 0; i < numofvertices; i++)
 	{
-		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
-		item_loc->x = rand() % (DRAWING_AREA_WIDTH - DISTANCE);
-		item_loc->y = rand() % (DRAWING_AREA_HEIGHT - DISTANCE);
+		GdkPoint *item_loc = g_new(GdkPoint,1);
+		item_loc->x = rand() % (drawing_area_alloc.width - DISTANCE_FROM_BORDER);
+		item_loc->y = rand() % (drawing_area_alloc.height - DISTANCE_FROM_BORDER);
 		// adding DISTANCE
 		// just for make sure there is DISTANCE between item_loc and border of drawing_area
-		item_loc->x += DISTANCE;
-		item_loc->y += DISTANCE;
+		item_loc->x = item_loc->x + DISTANCE;
+		item_loc->y = item_loc->y + DISTANCE;
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
-		g_debug("on_clicked_button_generating_random_graph:drawing vertex (%d,%d)",item_loc->x,item_loc->y);
 		draw_rectangle(drawing_area,item_loc,FALSE);
-/*		for(int j = i; j > 0; j++){
+		for(int j = 0; j < ui_points->len; j++){
+			g_debug("j is %d and ui_points is %d",j,ui_points->len);
 			int having_edge = rand() % 2;
+			if(numofedges_drew > numofedges)
+				break;
 			if(having_edge == ZERO)
 				continue;
 			// after implementing Graph interface , we should add this edge to that interface too
+			numofedges_drew++;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
-			g_debug("on_clicked_button_generating_random_graph:drawing line (%d,%d)->(%d,%d)",item_loc->x,item_loc->y,bag.second_item->x,bag.second_item->y);
+//			g_debug("on_clicked_button_generating_random_graph:%d (%d,%d)->(%d,%d)",ui_points->len,item_loc->x,item_loc->y,bag.second_item->x,bag.second_item->y);
 			draw_line(drawing_area);
-			}*/
+			}
 	}
-	
+	numofedges = numofedges_drew;
 }
 
 static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
@@ -182,7 +189,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		     ui_points->len);
 		// carefull if we dont want append this item , we should free space allocated for it
 		// otherwize we should free it when we generating random graph
-		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
+		GdkPoint *item_loc = g_new(GdkPoint,1);
 		item_loc->x = (int)event->x;
 		item_loc->y = (int)event->y;
 		for (int i = 0; i < ui_points->len; i++) {

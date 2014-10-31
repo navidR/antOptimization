@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 	gtk_container_add(GTK_CONTAINER(mainwin), frame_from_ui);
 
 	// getting preffered size from frame_from_ui for fixing size of mainwin currectly
-	minimum_size_for_frame_ui = g_new(GtkRequisition,1);
+	minimum_size_for_frame_ui = g_malloc(sizeof(GtkRequisition));
 	gtk_widget_get_preferred_size(frame_from_ui, minimum_size_for_frame_ui,
 				      NULL);
 

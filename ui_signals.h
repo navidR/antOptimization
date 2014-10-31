@@ -20,6 +20,13 @@ static void draw_line(GtkWidget * widget)
 	gtk_widget_queue_draw(widget);
 }
 
+// return random bool by probability
+// we use this for improving distributing of edges on vertices
+static gboolean next_bool(double probability)
+{
+	return (rand() / (double)RAND_MAX) < probability;
+}
+
 static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 					   GPtrArray *widget_array)
 {
@@ -140,9 +147,10 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		g_array_remove_index(ui_points, i);
 	}
 	srand(time(NULL));
+	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
 	for(int i = 0; i < numofvertices; i++)
 	{
-		GdkPoint *item_loc = g_new(GdkPoint,1);
+		GdkPoint *item_loc = g_malloc(sizeof(GdkPoint));
 		item_loc->x = rand() % (drawing_area_alloc.width - DISTANCE_FROM_BORDER);
 		item_loc->y = rand() % (drawing_area_alloc.height - DISTANCE_FROM_BORDER);
 		// adding DISTANCE
@@ -154,7 +162,8 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		draw_rectangle(drawing_area,item_loc,FALSE);
 		for(int j = 0; j < ui_points->len; j++){
 			g_debug("j is %d and ui_points is %d",j,ui_points->len);
-			int having_edge = rand() % 2;
+			double having_edge = next_bool(probability);
+			g_debug("having_edge %f",having_edge);
 			if(numofedges_drew > numofedges)
 				break;
 			if(having_edge == ZERO)
@@ -189,7 +198,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		     ui_points->len);
 		// carefull if we dont want append this item , we should free space allocated for it
 		// otherwize we should free it when we generating random graph
-		GdkPoint *item_loc = g_new(GdkPoint,1);
+		GdkPoint *item_loc = g_malloc(sizeof(GdkPoint));
 		item_loc->x = (int)event->x;
 		item_loc->y = (int)event->y;
 		for (int i = 0; i < ui_points->len; i++) {

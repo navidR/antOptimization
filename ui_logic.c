@@ -137,8 +137,8 @@ int main(int argc, char **argv)
 			 NULL);
 	g_signal_connect(graphwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
 			 NULL);
-	g_signal_connect(graphwin, EVENT_CONFIGURE_EVENT,
-			 G_CALLBACK(on_configure_event), widget_array);
+	g_signal_connect(graphwin, EVENT_SHOW,
+			 G_CALLBACK(on_show_event), widget_array);
 	g_signal_connect(drawing_area, EVENT_MOTION_NOTIFY_EVENT,
 			 G_CALLBACK(on_motion_notify_event), NULL);
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,

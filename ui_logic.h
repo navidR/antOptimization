@@ -15,7 +15,7 @@
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 25
 #define DISTANCE_FROM_BORDER 50
-#define DISTANCE_CLICK 5
+#define DISTANCE_CLICK 20
 #define RED 0.99
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
@@ -37,6 +37,7 @@
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
 const char *EVENT_CONFIGURE_EVENT = "configure-event";
+const char *EVENT_SHOW = "show";
 const char *EVENT_MOTION_NOTIFY_EVENT = "motion-notify-event";
 const char *EVENT_CLICKED = "clicked";
 const char *EVENT_DRAW = "draw";

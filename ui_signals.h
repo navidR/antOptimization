@@ -70,8 +70,8 @@ static void clear_surface(void)
 	cairo_destroy(cr);
 }
 
-static gboolean on_configure_event(GtkWidget * widget,
-				   GdkEventConfigure * event, gpointer data)
+static gboolean on_show_event(GtkWidget * widget,
+			      gpointer data)
 {
 	g_debug("on_configure_event");
 	if (surface)

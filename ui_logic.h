@@ -60,6 +60,7 @@ const char *button_generating_random_graph_name =
 
 // global variable
 static cairo_surface_t *surface = NULL;
+// change to variable , change to gtk_widget_get_allocated_width & height
 static gint *drawing_area_width, *drawing_area_height;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;

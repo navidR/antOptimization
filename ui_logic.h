@@ -3,7 +3,7 @@
 #define GRAPH_WIN_CONTAINER_BORDER_WIDTH 5
 #define GRAPH_WIN_WIDTH 1000
 #define GRAPH_WIN_HEIGHT 600
-#define DRAWING_AREA_WIDTH 800
+#define DRAWING_AREA_WIDTH 1000
 #define DRAWING_AREA_HEIGHT 600
 #define MAIN_WIN_WIDTH 400
 #define MAIN_WIN_HEIGHT 600
@@ -60,6 +60,7 @@ const char *button_generating_random_graph_name =
 
 // global variable
 static cairo_surface_t *surface = NULL;
+static gint *drawing_area_width, *drawing_area_height;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 

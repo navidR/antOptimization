@@ -2,6 +2,8 @@
 
 #include <gtk/gtk.h>
 #include <glib.h>
+#include <time.h>
+#include <stdlib.h>
 #include "ui_logic.h"
 #include "ui_signals.h"
 
@@ -37,6 +39,10 @@ int main(int argc, char **argv)
 	gtk_builder_add_from_file(builder, mainwin_ui_name, NULL);
 	mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	graphwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	// initialize drawing_area_width & height
+	drawing_area_width = malloc(sizeof(gint));
+	drawing_area_height = malloc(sizeof(gint));
 
 	// after loading frame_from_ui,load it to mainwin
 	frame_from_ui = gtk_builder_get_object(builder, mainwin_ui_frame_name);
@@ -108,8 +114,10 @@ int main(int argc, char **argv)
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(graphwin), frame);
 	drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH,
-				    DRAWING_AREA_HEIGHT);
+	gtk_widget_get_size_request(frame,drawing_area_width,drawing_area_height);
+	g_debug("main:set drawing_area (width,height)->(drawing_area_width,drawing_area_height)");
+	gtk_widget_set_size_request(drawing_area,drawing_area_width,drawing_area_height);
+//	gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH,DRAWING_AREA_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
 	// adding BUTTON PRESS AND MOTION MASK to gtk events

@@ -150,7 +150,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
 	for(int i = 0; i < numofvertices; i++)
 	{
-		GdkPoint *item_loc = g_malloc(sizeof(GdkPoint));
+		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 		item_loc->x = rand() % (drawing_area_alloc.width - DISTANCE_FROM_BORDER);
 		item_loc->y = rand() % (drawing_area_alloc.height - DISTANCE_FROM_BORDER);
 		// adding DISTANCE
@@ -198,7 +198,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		     ui_points->len);
 		// carefull if we dont want append this item , we should free space allocated for it
 		// otherwize we should free it when we generating random graph
-		GdkPoint *item_loc = g_malloc(sizeof(GdkPoint));
+		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 		item_loc->x = (int)event->x;
 		item_loc->y = (int)event->y;
 		for (int i = 0; i < ui_points->len; i++) {

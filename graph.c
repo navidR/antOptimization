@@ -1,17 +1,4 @@
 
-
-
-struct _graph{
-	int numofvertices;
-	int numofedges;
-	struct _edge edges[];
-};
-
-struct _edge{
-	unsigned short len;
-	unsigned short evaporation_rate;
-};
-
 /*
  *   we only use (half-n) of matrix 
  *  |x|x|x|x|x|
@@ -24,6 +11,18 @@ struct _edge{
  *(------------------ + n + 1) = index of (m,n) vertices in main_graph array
  *        2
  */
+
+
+struct _graph{
+	int numofvertices;
+	int numofedges;
+	struct _edge edges[];
+};
+
+struct _edge{
+	unsigned short len;
+	unsigned short evaporation_rate;
+};
 
 static struct _graph* initialize(int numofvertices){
 	struct _graph* graph = malloc(sizeof(struct _graph));

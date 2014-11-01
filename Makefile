@@ -8,7 +8,7 @@ production = -O3
 no-warning= -w
 reformatflags= -ut --linux-style
 indent=indent
-reformat-src = ui_logic.c ui_logic.h ui_signals.h
+reformat-src = ui_logic.c ui_logic.h ui_signals.h graph.c graph.h
 compile:
 	gcc $(gtk_flag) $(cflags) $(production) -o $(output) $(src)
 run:

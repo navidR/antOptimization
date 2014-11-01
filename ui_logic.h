@@ -23,6 +23,7 @@
 #define BUTTON_GENERATING_RANDOM_GRAPH_INDEX 3
 #define GRAPHWIN_INDEX 4
 #define DRAWING_AREA_INDEX 5
+#define MAINWIN_INDEX 6
 #define MIN_NUMOFANTS 2
 #define MAX_NUMOFANTS 500
 #define MIN_NUMOFVERTICES 3
@@ -32,7 +33,7 @@
 #define MAX_EVAPORATION_RATE 100
 #define INCREMENT_RATE 1
 #define LINE_WIDTH 0.75
-
+#define CLIMB_RATE 1
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
@@ -44,6 +45,7 @@ const char *EVENT_DELETE_EVENT = "delete-event";
 const char *EVENT_TOGGLED = "toggled";
 const char *EVENT_BUTTON_PRESS_EVENT = "button-press-event";
 const char *EVENT_VALUE_CHANGED = "value-changed";
+const char *EVENT_RESPONSE = "response";
 
 // global strings
 const char *mainwin_ui_name = "mainwindow.glade";
@@ -60,6 +62,8 @@ const char *button_drawing_mode_name = "button_drawing_mode";
 const char *button_solve_problem_name = "button_solve_problem";
 const char *button_generating_random_graph_name =
     "button_generating_random_graph";
+const char *dialog_title = "Number of Vertices";
+const char *dialog_first_button_text = "Ok";
 
 // global variable
 static cairo_surface_t *surface = NULL;

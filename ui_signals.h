@@ -57,20 +57,42 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 	g_debug("on_toggled_button_drawing_mode");
 	free_allocated();
 	gboolean g = gtk_toggle_button_get_active(button);
-	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area;
+	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area, *dialog, *mainwin; 
 	_mode *mode = g_ptr_array_index(widget_array, MODE_INDEX);
 	input_numofvertices =
 	    g_ptr_array_index(widget_array, INPUT_NUMOFVERTICES_INDEX);
 	input_numofedges = g_ptr_array_index(widget_array, INPUT_NUMOFEDGES_INDEX);
 	button_generating_random_graph = g_ptr_array_index(widget_array,BUTTON_GENERATING_RANDOM_GRAPH_INDEX);
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
-	if (g)
+	mainwin = g_ptr_array_index(widget_array,MAINWIN_INDEX);
+	if (g){
 		*mode = DRAWING_MODE;
+		dialog = gtk_dialog_new_with_buttons(dialog_title,mainwin,
+						     GTK_DIALOG_MODAL,
+						     dialog_first_button_text,
+						     GTK_RESPONSE_OK,
+						     NULL);
+		g_signal_connect_swapped(dialog,EVENT_RESPONSE,G_CALLBACK(gtk_widget_destroy),dialog);
+		GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+		GtkAdjustment *adjustment_input_numofvertices = gtk_adjustment_new(MIN_NUMOFVERTICES,
+										  MIN_NUMOFVERTICES,
+										  MAX_NUMOFVERTICES,
+										  INCREMENT_RATE, ZERO, ZERO);
+		// probably a memory leak !
+		GtkWidget *dialog_input_numofvertices = gtk_spin_button_new(adjustment_input_numofvertices,CLIMB_RATE,ZERO);
+		gtk_container_add(GTK_CONTAINER(content),dialog_input_numofvertices);
+		gtk_dialog_set_default_response(dialog,GTK_RESPONSE_OK);
+		gtk_window_set_resizable(GTK_WINDOW(dialog), RESIZABLE);
+		gtk_widget_show_all(dialog);
+		int result = gtk_dialog_run(dialog);
+		g_debug("result is %d",result);
+		numofvertices = gtk_spin_button_get_value_as_int(dialog_input_numofvertices);
+	}
 	else
 		*mode = RANDOM_MODE;
-	gtk_widget_set_sensitive(input_numofvertices, g);
-	gtk_widget_set_sensitive(input_numofedges, g);
-	gtk_widget_set_sensitive(button_generating_random_graph, g);
+	gtk_widget_set_sensitive(input_numofvertices, !g);
+	gtk_widget_set_sensitive(input_numofedges, !g);
+	gtk_widget_set_sensitive(button_generating_random_graph, !g);
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
 
@@ -152,7 +174,6 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	gtk_widget_queue_draw(drawing_area);
 
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
-	g_debug("on_clicked_button_generating_random_graph:drawing_area (width,height)->(%d,%d)",drawing_area_alloc.width,drawing_area_alloc.height);
 	free_allocated();
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
@@ -168,19 +189,29 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
 		draw_rectangle(drawing_area,item_loc,FALSE);
+		gboolean connectivity = FALSE;
 		for(int j = 0; j < (ui_points->len - 1); j++){
 			double having_edge = next_bool(probability);
-			g_debug("j is %d and ui_points is %d : having_edge %f",j,ui_points->len,having_edge);
+			g_debug("on_clicked_button_generating_random_graph:j is %d and ui_points is %d : having_edge %f",j,ui_points->len,having_edge);
 			if(numofedges_drew >= numofedges)
 				break;
 			if(having_edge == ZERO)
 				continue;
 			// after implementing Graph interface , we should add this edge to that interface too
 			numofedges_drew++;
+			connectivity = TRUE;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
 			draw_line(drawing_area);
 			}
+		if(!connectivity && i != 0){
+			g_debug("on_clicked_button_generating_random_graph:special case , every node should be connected");
+			int index = rand() % i;
+			numofedges_drew++;
+			bag.first_item = item_loc;
+			bag.second_item = g_array_index(ui_points, GdkPoint*, index);
+			draw_line(drawing_area);
+		}
 	}
 	g_debug("on_clicked_button_generating_random_graph numofedges:%d,numofedges_drew:%d",numofedges,numofedges_drew);
 	numofedges = numofedges_drew;
@@ -262,10 +293,13 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 						 gpointer data)
 {
 	g_debug("on_value_changed_input_numofvertices");
+	free_allocated();
 	GtkSpinButton *input_numofedges = data;
 	int min_numofedges = gtk_spin_button_get_value_as_int(widget);
+	numofvertices = min_numofedges; // just setting numofvertices to value of input_numofvertices
 	int max_numofedges = ((min_numofedges * (min_numofedges - 1)) / 2);
-	g_debug("on_value_changed_input_numofvertices:max_numofedges:%d",
+	g_debug("on_value_changed_input_numofvertices:numofvertices:%d max_numofedges:%d",
+		numofvertices,
 		max_numofedges);
 	GtkAdjustment *adjustment_input_numofedges =
 	    gtk_adjustment_new(min_numofedges, min_numofedges, max_numofedges,

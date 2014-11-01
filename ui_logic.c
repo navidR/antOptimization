@@ -132,6 +132,8 @@ int main(int argc, char **argv)
 	g_ptr_array_add(widget_array, graphwin);
 	// DRAWING_AREA_INDEX = 5
 	g_ptr_array_add(widget_array, drawing_area);
+	// MAINWIN_INDEX = 6
+	g_ptr_array_add(widget_array, mainwin);
 
 	// signals
 	g_signal_connect(mainwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),

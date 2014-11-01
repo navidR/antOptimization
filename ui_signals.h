@@ -20,44 +20,23 @@ static void draw_line(GtkWidget * widget)
 	gtk_widget_queue_draw(widget);
 }
 
+void free_allocated(){
+	g_debug("free_allocated:ui_points->len is %d",ui_points->len);
+	bag.first_item = NULL;
+	bag.second_item = NULL;
+	for(int i = (ui_points->len - 1); i >= 0; i--){
+		g_debug("free_allocated:freeing item %d and ui_points->len %d",i,ui_points->len);
+		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
+		g_array_remove_index(ui_points, i);
+		free(temp_item);
+	}
+}
+
 // return random bool by probability
 // we use this for improving distributing of edges on vertices
 static gboolean next_bool(double probability)
 {
 	return (rand() / (double)RAND_MAX) < probability;
-}
-
-static void on_toggled_button_drawing_mode(GtkToggleButton * button,
-					   GPtrArray *widget_array)
-{
-	g_debug("on_toggled");
-	gboolean g = gtk_toggle_button_get_active(button);
-	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph;
-	_mode *mode = g_ptr_array_index(widget_array, MODE_INDEX);
-	input_numofvertices =
-	    g_ptr_array_index(widget_array, INPUT_NUMOFVERTICES_INDEX);
-	input_numofedges = g_ptr_array_index(widget_array, INPUT_NUMOFEDGES_INDEX);
-	button_generating_random_graph = g_ptr_array_index(widget_array,BUTTON_GENERATING_RANDOM_GRAPH_INDEX);
-	if (g) {
-		*mode = DRAWING_MODE;
-		gtk_widget_set_sensitive(input_numofvertices, FALSE);
-		gtk_widget_set_sensitive(input_numofedges, FALSE);
-		gtk_widget_set_sensitive(button_generating_random_graph, FALSE);
-	} else {
-		*mode = RANDOM_MODE;
-		gtk_widget_set_sensitive(input_numofvertices, TRUE);
-		gtk_widget_set_sensitive(input_numofedges, TRUE);
-		gtk_widget_set_sensitive(button_generating_random_graph, TRUE);
-	}
-
-}
-
-static gboolean on_draw(GtkWidget * widget, cairo_t * cr, gpointer data)
-{
-	g_debug("on_draw");
-	cairo_set_source_surface(cr, surface, 0, 0);
-	cairo_paint(cr);
-	return FALSE;
 }
 
 static void clear_surface(void)
@@ -68,6 +47,41 @@ static void clear_surface(void)
 	cairo_set_source_rgb(cr, RGB_SURFACE, RGB_SURFACE, RGB_SURFACE);
 	cairo_paint(cr);
 	cairo_destroy(cr);
+}
+
+// memory leak
+// should free all allocated memory for points
+static void on_toggled_button_drawing_mode(GtkToggleButton * button,
+					   GPtrArray *widget_array)
+{
+	g_debug("on_toggled_button_drawing_mode");
+	free_allocated();
+	gboolean g = gtk_toggle_button_get_active(button);
+	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area;
+	_mode *mode = g_ptr_array_index(widget_array, MODE_INDEX);
+	input_numofvertices =
+	    g_ptr_array_index(widget_array, INPUT_NUMOFVERTICES_INDEX);
+	input_numofedges = g_ptr_array_index(widget_array, INPUT_NUMOFEDGES_INDEX);
+	button_generating_random_graph = g_ptr_array_index(widget_array,BUTTON_GENERATING_RANDOM_GRAPH_INDEX);
+	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
+	if (g)
+		*mode = DRAWING_MODE;
+	else
+		*mode = RANDOM_MODE;
+	gtk_widget_set_sensitive(input_numofvertices, g);
+	gtk_widget_set_sensitive(input_numofedges, g);
+	gtk_widget_set_sensitive(button_generating_random_graph, g);
+	clear_surface();
+	gtk_widget_queue_draw(drawing_area);
+
+}
+
+static gboolean on_draw(GtkWidget * widget, cairo_t * cr, gpointer data)
+{
+	g_debug("on_draw");
+	cairo_set_source_surface(cr, surface, 0, 0);
+	cairo_paint(cr);
+	return FALSE;
 }
 
 static gboolean on_show_event(GtkWidget * widget,
@@ -139,13 +153,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
 	g_debug("on_clicked_button_generating_random_graph:drawing_area (width,height)->(%d,%d)",drawing_area_alloc.width,drawing_area_alloc.height);
-	bag.first_item = NULL;
-	bag.second_item = NULL;
-	for(int i = (ui_points->len - 1); i >= 0; i--){
-		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
-		free(temp_item);
-		g_array_remove_index(ui_points, i);
-	}
+	free_allocated();
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
 	for(int i = 0; i < numofvertices; i++)
@@ -160,11 +168,10 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
 		draw_rectangle(drawing_area,item_loc,FALSE);
-		for(int j = 0; j < ui_points->len; j++){
-			g_debug("j is %d and ui_points is %d",j,ui_points->len);
+		for(int j = 0; j < (ui_points->len - 1); j++){
 			double having_edge = next_bool(probability);
-			g_debug("having_edge %f",having_edge);
-			if(numofedges_drew > numofedges)
+			g_debug("j is %d and ui_points is %d : having_edge %f",j,ui_points->len,having_edge);
+			if(numofedges_drew >= numofedges)
 				break;
 			if(having_edge == ZERO)
 				continue;
@@ -172,10 +179,10 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			numofedges_drew++;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
-//			g_debug("on_clicked_button_generating_random_graph:%d (%d,%d)->(%d,%d)",ui_points->len,item_loc->x,item_loc->y,bag.second_item->x,bag.second_item->y);
 			draw_line(drawing_area);
 			}
 	}
+	g_debug("on_clicked_button_generating_random_graph numofedges:%d,numofedges_drew:%d",numofedges,numofedges_drew);
 	numofedges = numofedges_drew;
 }
 
@@ -248,14 +255,6 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		     ui_points->len);
 	}
 
-	return TRUE;
-}
-
-static gboolean
-on_motion_notify_event(GtkWidget * widget,
-		       GdkEventMotion * event, gpointer data)
-{
-//      g_debug("from on_motion_notify_event (%f,%f)\n",event->x,event->y);
 	return TRUE;
 }
 

@@ -8,14 +8,14 @@
 #define MAIN_WIN_WIDTH 400
 #define MAIN_WIN_HEIGHT 600
 #define RESIZABLE FALSE
-#define RADIUS 5
+#define RADIUS 3
 #define FIRST_ANGLE 0
 #define SECOND_ANGLE 8
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 25
 #define DISTANCE_FROM_BORDER 50
-#define DISTANCE_CLICK 20
+#define DISTANCE_CLICK 5
 #define RED 0.99
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
@@ -38,7 +38,6 @@
 const char *EVENT_DESTROY = "destroy";
 const char *EVENT_CONFIGURE_EVENT = "configure-event";
 const char *EVENT_SHOW = "show";
-const char *EVENT_MOTION_NOTIFY_EVENT = "motion-notify-event";
 const char *EVENT_CLICKED = "clicked";
 const char *EVENT_DRAW = "draw";
 const char *EVENT_DELETE_EVENT = "delete-event";
@@ -64,6 +63,7 @@ const char *button_generating_random_graph_name =
 
 // global variable
 static cairo_surface_t *surface = NULL;
+static struct _graph* graph;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 
@@ -79,3 +79,4 @@ static GArray *ui_points;
 // main value's for graph's
 static int numofvertices = 0;
 static int numofedges = 0 ;
+

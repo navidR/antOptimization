@@ -116,8 +116,7 @@ int main(int argc, char **argv)
 
 	// adding BUTTON PRESS AND MOTION MASK to gtk events
 	gtk_widget_set_events(drawing_area,
-			      gtk_widget_get_events(drawing_area) |
-			      GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK);
+			      gtk_widget_get_events(drawing_area) | GDK_BUTTON_PRESS_MASK);
 
 	// widget_array initialize
 	// passing array of {mode,GtkWidget(input_numofvertices),GtkWidget(input_numofedges)} to singal for GtkToggleButton
@@ -141,8 +140,6 @@ int main(int argc, char **argv)
 			 NULL);
 	g_signal_connect(graphwin, EVENT_SHOW,
 			 G_CALLBACK(on_show_event), widget_array);
-	g_signal_connect(drawing_area, EVENT_MOTION_NOTIFY_EVENT,
-			 G_CALLBACK(on_motion_notify_event), NULL);
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,
 			 G_CALLBACK(on_button_press_event), &mode);
 	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);

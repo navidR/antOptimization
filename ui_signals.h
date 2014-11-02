@@ -1,4 +1,9 @@
 // we should minimum using global variable , and reimplement this via second parameter
+static int euclidean_distance(GdkPoint *a,GdkPoint *b)
+{
+	g_debug("euclidean_distance:(%d,%d)->(%d,%d)",a->x,a->y,b->x,b->y);
+	return sqrt( pow(abs(a->x - b->x) , 2 ) + pow( abs( a->y - b->y ) , 2 ) );
+}
 
 static void on_value_changed_dialog_input_numofvertices(GtkSpinButton *widget,
 							gpointer data)
@@ -32,6 +37,8 @@ void free_allocated(){
 	g_debug("free_allocated:ui_points->len is %d",ui_points->len);
 	bag.first_item = NULL;
 	bag.second_item = NULL;
+	if(!ui_points->len)
+		return;
 	for(int i = (ui_points->len - 1); i >= 0; i--){
 		g_debug("free_allocated:freeing item %d and ui_points->len %d",i,ui_points->len);
 		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
@@ -105,7 +112,10 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 	gtk_widget_set_sensitive(button_generating_random_graph, !g);
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
-
+#if !defined(ONLYUI)
+		if(graph)
+			free_graph(graph);
+#endif
 }
 
 static gboolean on_draw(GtkWidget * widget, cairo_t * cr, gpointer data)
@@ -182,9 +192,13 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 						    gtk_widget_get_allocated_height(graphwin));
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
-
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
 	free_allocated();
+        #if !defined(ONLYUI)
+	if(graph)
+		free_graph(graph);
+	graph = initialize(numofvertices);
+        #endif
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
 	for(int i = 0; i < numofvertices; i++)
@@ -213,7 +227,14 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
 			draw_line(drawing_area);
-			}
+			#if !defined(ONLYUI)
+			// initializing graph's line
+			int distance = euclidean_distance(bag.first_item,bag.second_item);
+			g_debug("on_clicked_button_generating_random_graph: euclidean distance is %d",distance);
+			struct _edge *edge = create_edge(distance,ZERO);
+			connect_edge(graph,i,j,edge);
+			#endif
+		}
 		if(!connectivity && i != 0){
 			g_debug("on_clicked_button_generating_random_graph:special case , every node should be connected");
 			int index = rand() % i;
@@ -221,6 +242,13 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, index);
 			draw_line(drawing_area);
+			
+			#if !defined(ONLYUI)
+			int distance = euclidean_distance(bag.first_item,bag.second_item); // initializing graph's line
+			g_debug("on_clicked_button_generating_random_graph: euclidean distance is %d",distance);
+			struct _edge *edge = create_edge(distance,ZERO);
+			connect_edge(graph,i,index,edge);
+			#endif
 		}
 	}
 	g_debug("on_clicked_button_generating_random_graph numofedges:%d,numofedges_drew:%d",numofedges,numofedges_drew);
@@ -241,6 +269,11 @@ static gboolean on_button_press_event(GtkWidget * widget,
 	g_debug("on_button_press_event:(%d,%d) and ui_points->len is %d and numofvetices is %d", (int)event->x, (int)event->y, ui_points->len, numofvertices);
 	_mode *mode = pmode;
 	if (*mode == DRAWING_MODE) {
+		// if graph is null then this is first point and we should initialize graph
+#if !defined(ONLYUI)
+		if(!graph)
+			graph = initialize(numofvertices);
+#endif
 		// carefull if we dont want append this item , we should free space allocated for it
 		// otherwize we should free it when we generating random graph
 		GdkPoint *item_loc = malloc(sizeof(GdkPoint));

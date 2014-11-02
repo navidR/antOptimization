@@ -35,6 +35,10 @@
 #define LINE_WIDTH 0.75
 #define CLIMB_RATE 1
 
+#define MIN_PHEROMONE 0
+#define MAX_PHEROMONE 100
+
+
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
 const char *EVENT_CONFIGURE_EVENT = "configure-event";

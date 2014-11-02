@@ -1,11 +1,13 @@
 // created by emacs {navid  oct 25 2014}
-
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <time.h>
 #include <stdlib.h>
-#include "graph.h"
+#include <math.h>
 #include "ui_logic.h"
+#if !defined(ONLYUI)
+#include "graph.h"
+#endif
 #include "ui_signals.h"
 
 
@@ -26,6 +28,10 @@ int main(int argc, char **argv)
 	    *adjustment_input_numofants, *adjustment_evaporation_rate,
 	    *adjustment_input_numofedges;
 	_mode mode = RANDOM_MODE;
+
+#if defined(ONLYUI)
+	g_debug("main:compiled via ONLYUI flag,for debuging onlyui purpuse");
+#endif
 	
 	ui_points =
 	    g_array_sized_new(FALSE, TRUE, sizeof(GdkPoint),
@@ -35,8 +41,9 @@ int main(int argc, char **argv)
 			__LINE__);
 	// array for capsulizing information in widget_array for signal
 	widget_array = g_ptr_array_new();
-
+	g_debug("main:before init,line %d num of argument %d and is %s",__LINE__,argc,argv[0]);
 	gtk_init(&argc, &argv);
+	g_debug("main:after init,line %d",__LINE__);
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, mainwin_ui_name, NULL);
 	mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -168,6 +175,7 @@ int main(int argc, char **argv)
 	gtk_widget_show(mainwin);
 	gtk_widget_show_all(graphwin);
 
+	g_debug("main:going to event loop");
 	gtk_main();
 	return 0;
 }

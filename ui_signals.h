@@ -57,12 +57,10 @@ void free_allocated(){
 	if(!ui_points->len)
 		return;
 	for(int i = (ui_points->len - 1); i >= 0; i--){
-		g_debug("free_allocated:freeing item %d and ui_points->len %d",i,ui_points->len);
 		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
 		g_array_remove_index(ui_points, i);
 		free(temp_item);
 	}
-	g_debug("free_allocated:done ui_points->len is %d",ui_points->len);
 }
 
 // return random bool by probability
@@ -83,6 +81,9 @@ static void clear_surface(void)
 }
 
 #if !defined(ONLYUI)
+// this function is just only for debugging purpose
+// for example in this function len of edge ignored
+// and just draw edge and vertices
 static void visualize_graph(GtkWidget *drawing_area){
 	g_debug("visualize_graph with graph size : %d",graph->numofvertices);
 	free_allocated();
@@ -101,7 +102,19 @@ static void visualize_graph(GtkWidget *drawing_area){
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
 		draw_rectangle(drawing_area,item_loc,FALSE);
+		// we go through 0 until ((i*m)-i)/2) = (ui_points->len)
+		// for checking if we have connected vertices
+		// for example in third row case
+		// we go from 0,1,2 and checking if we have connected vertices or not
+		for(int j = 0; j < (ui_points->len); j++){
+			if(!graph->edges[i+j])
+				continue;
+			bag.first_item = item_loc;
+			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
+			draw_line(drawing_area);
+		}
 	}
+	
 }
 #endif
 

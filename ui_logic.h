@@ -8,14 +8,14 @@
 #define MAIN_WIN_WIDTH 400
 #define MAIN_WIN_HEIGHT 600
 #define RESIZABLE FALSE
-#define RADIUS 3
+#define RADIUS 5
 #define FIRST_ANGLE 0
 #define SECOND_ANGLE 8
 #define RGB_SURFACE 1
 #define RESERVED_SIZE_OF_ARRAY_POINTS 20
 #define DISTANCE 25
 #define DISTANCE_FROM_BORDER 50
-#define DISTANCE_CLICK 5
+#define DISTANCE_CLICK 10
 #define RED 0.99
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
@@ -83,4 +83,3 @@ static GArray *ui_points;
 // main value's for graph's
 static int numofvertices = 0;
 static int numofedges = 0 ;
-

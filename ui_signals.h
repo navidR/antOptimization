@@ -1,4 +1,12 @@
 // we should minimum using global variable , and reimplement this via second parameter
+
+static void on_value_changed_dialog_input_numofvertices(GtkSpinButton *widget,
+							gpointer data)
+{
+	numofvertices = gtk_spin_button_get_value_as_int(widget);
+	g_debug("on_value_changed_dialog_input_numofvertices:numofvertices is %d",numofvertices);
+}
+
 static void draw_line(GtkWidget * widget)
 {
 	cairo_t *cr;
@@ -78,15 +86,17 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 										  MIN_NUMOFVERTICES,
 										  MAX_NUMOFVERTICES,
 										  INCREMENT_RATE, ZERO, ZERO);
-		// probably a memory leak !
+		numofvertices = MIN_NUMOFVERTICES;
 		GtkWidget *dialog_input_numofvertices = gtk_spin_button_new(adjustment_input_numofvertices,CLIMB_RATE,ZERO);
 		gtk_container_add(GTK_CONTAINER(content),dialog_input_numofvertices);
 		gtk_dialog_set_default_response(dialog,GTK_RESPONSE_OK);
 		gtk_window_set_resizable(GTK_WINDOW(dialog), RESIZABLE);
 		gtk_widget_show_all(dialog);
+		g_signal_connect(dialog_input_numofvertices, EVENT_VALUE_CHANGED,
+				 G_CALLBACK(on_value_changed_dialog_input_numofvertices),
+				 NULL);
 		int result = gtk_dialog_run(dialog);
-		g_debug("result is %d",result);
-		numofvertices = gtk_spin_button_get_value_as_int(dialog_input_numofvertices);
+		g_debug("result is %d and numofvertices is %d",result,numofvertices);
 	}
 	else
 		*mode = RANDOM_MODE;
@@ -228,12 +238,9 @@ static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
 static gboolean on_button_press_event(GtkWidget * widget,
 				      GdkEventButton * event, gpointer pmode)
 {
-	g_debug("on_button_press_event:(%d,%d)", (int)event->x, (int)event->y);
+	g_debug("on_button_press_event:(%d,%d) and ui_points->len is %d and numofvetices is %d", (int)event->x, (int)event->y, ui_points->len, numofvertices);
 	_mode *mode = pmode;
 	if (*mode == DRAWING_MODE) {
-		g_debug
-		    ("on_button_press_event:new item_loc adding to ui_points->len : %d",
-		     ui_points->len);
 		// carefull if we dont want append this item , we should free space allocated for it
 		// otherwize we should free it when we generating random graph
 		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
@@ -244,12 +251,6 @@ static gboolean on_button_press_event(GtkWidget * widget,
 			    g_array_index(ui_points, GdkPoint* , i);
 			if (abs(item_loc->x - temp_item->x) < DISTANCE_CLICK
 			    && abs(item_loc->y - temp_item->y) < DISTANCE_CLICK) {
-				// there is no need for this debuging information
-				// g_debug("x-x is %d y-y is %d", abs(item_loc->x_ - temp_item->x_),abs(item_loc->y_ - temp_item->y_));
-				g_debug
-				    ("on_button_press_event:on_button_press_event:already (%d,%d) there is point so close to this one (%d,%d)",
-				     temp_item->x, temp_item->y, item_loc->x,
-				     item_loc->y);
 				free(item_loc);
 				// we dont have any vertex selected
 				if (bag.first_item == NULL
@@ -279,11 +280,15 @@ static gboolean on_button_press_event(GtkWidget * widget,
 			free(item_loc);
 			return TRUE;
 		}
-		draw_rectangle(widget, item_loc, FALSE);
-		g_array_append_val(ui_points, item_loc);
-		g_debug
-		    ("on_button_press_event:number of elements in ui_points : %d",
-		     ui_points->len);
+		// drawing rectangle only if we have allowed
+		if(numofvertices > ui_points->len)
+		{
+			draw_rectangle(widget, item_loc, FALSE);
+			g_array_append_val(ui_points, item_loc);
+			g_debug
+				("on_button_press_event:number of elements in ui_points : %d",
+				 ui_points->len);
+		}
 	}
 
 	return TRUE;
@@ -308,3 +313,4 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 				       adjustment_input_numofedges);
 	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
+

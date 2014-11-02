@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 	g_signal_connect(graphwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
 			 NULL);
 	g_signal_connect(graphwin, EVENT_SHOW,
-			 G_CALLBACK(on_show_event), widget_array);
+			 G_CALLBACK(on_show_event), NULL);
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,
 			 G_CALLBACK(on_button_press_event), &mode);
 	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);
@@ -160,7 +160,8 @@ int main(int argc, char **argv)
 			 G_CALLBACK(on_toggled_button_drawing_mode),
 			 widget_array);
 	g_signal_connect(button_solve_problem, EVENT_CLICKED,
-			 G_CALLBACK(on_clicked_button_solve_problem), NULL);
+			 G_CALLBACK(on_clicked_button_solve_problem),
+			 widget_array);
 	g_signal_connect(button_generating_random_graph, EVENT_CLICKED,
 			 G_CALLBACK(on_clicked_button_generating_random_graph),
 			 widget_array);

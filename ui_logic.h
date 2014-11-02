@@ -71,7 +71,7 @@ const char *dialog_first_button_text = "Ok";
 
 // global variable
 static cairo_surface_t *surface = NULL;
-static struct _graph* graph;
+static struct _graph *graph;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 

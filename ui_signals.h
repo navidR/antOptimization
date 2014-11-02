@@ -12,6 +12,23 @@ static void on_value_changed_dialog_input_numofvertices(GtkSpinButton *widget,
 	g_debug("on_value_changed_dialog_input_numofvertices:numofvertices is %d",numofvertices);
 }
 
+static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
+			   gboolean status)
+{
+	cairo_t *cr;
+	g_debug("drawing here : (%d,%d)", item_loc->x, item_loc->y);
+	if (!surface)
+		g_error("surface is null , fatal error in line:%d", __LINE__);
+	cr = cairo_create(surface);
+	if (status)
+		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
+	cairo_arc(cr, item_loc->x, item_loc->y, RADIUS, FIRST_ANGLE,
+		  SECOND_ANGLE);
+	cairo_fill(cr);
+	cairo_destroy(cr);
+	gtk_widget_queue_draw(widget);
+}
+
 static void draw_line(GtkWidget * widget)
 {
 	cairo_t *cr;
@@ -63,6 +80,29 @@ static void clear_surface(void)
 	cairo_paint(cr);
 	cairo_destroy(cr);
 }
+
+#if !defined(ONLYUI)
+static void visualize_graph(GtkWidget *drawing_area){
+	g_debug("visualize_graph with graph size : %d",graph->numofvertices);
+	free_allocated();
+	clear_surface();
+	gtk_widget_queue_draw(drawing_area);
+	GtkAllocation drawing_area_alloc;
+	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
+	for(int i = 0; i < graph->numofvertices; i++){
+		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
+		item_loc->x = rand() % (drawing_area_alloc.width - DISTANCE_FROM_BORDER);
+		item_loc->y = rand() % (drawing_area_alloc.height - DISTANCE_FROM_BORDER);
+		// adding DISTANCE
+		// just for make sure there is DISTANCE between item_loc and border of drawing_area
+		item_loc->x = item_loc->x + DISTANCE;
+		item_loc->y = item_loc->y + DISTANCE;
+		g_array_append_val(ui_points,item_loc);
+		// after implementing Graph interface , we should add this edge to that interface too
+		draw_rectangle(drawing_area,item_loc,FALSE);
+	}
+}
+#endif
 
 // memory leak
 // should free all allocated memory for points
@@ -130,6 +170,7 @@ static gboolean on_show_event(GtkWidget * widget,
 			      gpointer data)
 {
 	g_debug("on_configure_event");
+
 	if (surface)
 		cairo_surface_destroy(surface);
 	surface =
@@ -141,23 +182,6 @@ static gboolean on_show_event(GtkWidget * widget,
 					      (widget));
 	clear_surface();
 	return TRUE;
-}
-
-static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
-			   gboolean status)
-{
-	cairo_t *cr;
-	g_debug("drawing here : (%d,%d)", item_loc->x, item_loc->y);
-	if (!surface)
-		g_error("surface is null , fatal error in line:%d", __LINE__);
-	cr = cairo_create(surface);
-	if (status)
-		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
-	cairo_arc(cr, item_loc->x, item_loc->y, RADIUS, FIRST_ANGLE,
-		  SECOND_ANGLE);
-	cairo_fill(cr);
-	cairo_destroy(cr);
-	gtk_widget_queue_draw(widget);
 }
 
 static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event,
@@ -184,12 +208,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	numofvertices = gtk_spin_button_get_value_as_int(input_numofvertices);
 	numofedges = gtk_spin_button_get_value_as_int(input_numofedges);
 	g_debug("on_clicked_button_generating_random_graph:numofvertices is %d , numofedges is %d", numofvertices, numofedges);
-	if(surface)
-		cairo_surface_destroy(surface);
-	surface = gdk_window_create_similar_surface(gtk_widget_get_window(graphwin),
-						    CAIRO_CONTENT_COLOR,
-						    gtk_widget_get_allocated_width(graphwin),
-						    gtk_widget_get_allocated_height(graphwin));
+	// just clear surface and re-draw
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
@@ -255,11 +274,19 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	numofedges = numofedges_drew;
 }
 
-static void on_clicked_button_solve_problem(GtkWidget * widget, gpointer data)
+static void on_clicked_button_solve_problem(GtkWidget * widget, GPtrArray *widget_array)
 {
 	g_debug("clicked on problem solve button, not implemented yet");
 	// TODO
 	// not implement yet
+	// just for testing purpose
+	// for now we clear all drawing area and redraw all graph
+	// we want check our graph Implementation
+       
+#if !defined(ONLYUI)
+	GtkWidget *drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
+	visualize_graph(drawing_area);
+#endif
 }
 
 // we send Mode as pointer in gpointer (3rd)

@@ -106,8 +106,8 @@ static void visualize_graph(GtkWidget *drawing_area){
 		// for checking if we have connected vertices
 		// for example in third row case
 		// we go from 0,1,2 and checking if we have connected vertices or not
-		for(int j = 0; j < (ui_points->len); j++){
-			if(!graph->edges[i+j])
+		for(int j = 0; j < i; j++){
+			if(!is_connected(graph,i,j))
 				continue;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
@@ -233,7 +233,6 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		free_graph(graph);
 	g_debug("initialize graph with %d vertices",numofvertices);
 	graph = initialize(numofvertices);
-	g_debug("after initialize graph with");
         #endif
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
@@ -252,7 +251,6 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		gboolean connectivity = FALSE;
 		for(int j = 0; j < (ui_points->len - 1); j++){
 			double having_edge = next_bool(probability);
-			g_debug("on_clicked_button_generating_random_graph:j is %d and ui_points is %d : having_edge %f",j,ui_points->len,having_edge);
 			if(numofedges_drew >= numofedges)
 				break;
 			if(having_edge == ZERO)
@@ -266,13 +264,11 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			#if !defined(ONLYUI)
 			// initializing graph's line
 			int distance = euclidean_distance(bag.first_item,bag.second_item);
-			g_debug("on_clicked_button_generating_random_graph: euclidean distance is %d",distance);
 			struct _edge *edge = create_edge(distance,ZERO);
 			connect_edge(graph,i,j,edge);
 			#endif
 		}
 		if(!connectivity && i != 0){
-			g_debug("on_clicked_button_generating_random_graph:special case , every node should be connected");
 			int index = rand() % i;
 			numofedges_drew++;
 			bag.first_item = item_loc;
@@ -281,13 +277,11 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			
 			#if !defined(ONLYUI)
 			int distance = euclidean_distance(bag.first_item,bag.second_item); // initializing graph's line
-			g_debug("on_clicked_button_generating_random_graph: euclidean distance is %d",distance);
 			struct _edge *edge = create_edge(distance,ZERO);
 			connect_edge(graph,i,index,edge);
 			#endif
 		}
 	}
-	g_debug("on_clicked_button_generating_random_graph numofedges:%d,numofedges_drew:%d",numofedges,numofedges_drew);
 	numofedges = numofedges_drew;
 }
 

@@ -93,6 +93,7 @@ struct _edge* is_connected(struct _graph* graph , int m, int n ){
 // just send edge as null
 void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 {
+	g_debug("connect_edge:graph->len:%d,m:%d,n:%d,edge->len:%d",graph->len,m,n,edge->len);
 	if(m > graph->numofvertices || n > graph->numofvertices)
 		g_error("connect_edge:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
 	int indx = index(m,n);

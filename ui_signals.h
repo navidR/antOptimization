@@ -62,6 +62,7 @@ void free_allocated(){
 		g_array_remove_index(ui_points, i);
 		free(temp_item);
 	}
+	g_debug("free_allocated:done ui_points->len is %d",ui_points->len);
 }
 
 // return random bool by probability
@@ -214,9 +215,12 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
 	free_allocated();
         #if !defined(ONLYUI)
+	g_debug("before freeing graph");
 	if(graph)
 		free_graph(graph);
+	g_debug("initialize graph with %d vertices",numofvertices);
 	graph = initialize(numofvertices);
+	g_debug("after initialize graph with");
         #endif
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);

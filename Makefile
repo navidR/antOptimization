@@ -3,7 +3,7 @@ src = ui_logic.c graph.c
 onlyuisrc = ui_logic.c
 output = antGraph
 cflags = --std=c11 -lm
-debugflag = -g
+debugflag = -g -DDEBUG
 debugvariable = G_MESSAGES_DEBUG="all"
 production = -O3
 no-warning = -w

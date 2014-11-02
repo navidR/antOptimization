@@ -24,7 +24,14 @@ static int index(int m, int n){
 		n ^= m;
 		m ^= n;
 	}
-	return (((m*m)/2)+n); // description is in line ~3
+#ifdef DEBUG
+	// only for debugging
+	int temp = ((((m*m)-m)/2)+n);
+	g_debug("index:for (%d,%d)->%d",m,n,temp);
+	return temp; 
+#else
+	return ((((m*m)-m)/2)+n);
+#endif
 }
 
 struct _edge* create_edge(int len, int pheromone_value){
@@ -32,6 +39,7 @@ struct _edge* create_edge(int len, int pheromone_value){
 	if(pheromone_value > MAX_PHEROMONE)
 		g_error("create_edge:phermone value is not acceptable %d",pheromone_value);
 	struct _edge* edge = malloc(sizeof(struct _edge));
+	g_debug("create_edge:allocated len %d in %xp",len,edge);
 	edge->len = len;
 	edge->pheromone_value = pheromone_value;
 	edge->selected = false;
@@ -49,6 +57,7 @@ bool is_selected(struct _graph *graph, int m, int n){
 struct _graph* initialize(int numofvertices){
 	g_debug("initialize:numofvertices %d",numofvertices);
 	struct _graph* graph = malloc(sizeof(struct _graph));
+	g_debug("initialize:allocated graph %xp",graph);
 	graph->numofvertices = numofvertices;
 	graph->numofedges = ZERO;
 	// we need array size of 
@@ -57,7 +66,30 @@ struct _graph* initialize(int numofvertices){
 	//       2
 	graph->len = ((numofvertices * numofvertices) - numofvertices)/2;
 	graph->edges = calloc(graph->len, sizeof(struct _edge*));
+	g_debug("initialize:allocated graph->edges in %xp",graph->edges);
 	return graph;
+}
+
+// freeing every associated resource to specific graph
+// first surfing into every element , and freeing it
+// then freeing array of struct _edges*
+// and at the end freeing struct _graph itself
+void free_graph(struct _graph *graph){
+	g_debug("free_graph:graph->numofvertices:%d and graph->len is %d",graph->numofvertices,graph->len);
+	for(int i = 0 ; i < graph->len;i++){
+		g_debug("free_graph:freeing element in %d",i);
+		if(graph->edges[i]){
+			g_debug("free_graph:freeing element:%d address:%xp len is %d",i,graph->edges[i],graph->edges[i]->len);
+			free(graph->edges[i]);
+		}
+	}
+	g_debug("free_graph:after freeing edges element graph->edges %xp",graph->edges);
+	free(graph->edges);
+	graph->edges = NULL;
+	g_debug("free_graph:after freeing edge");
+	free(graph);
+	graph = NULL;
+	return;
 }
 
 struct _edge* is_connected(struct _graph* graph , int m, int n ){
@@ -77,24 +109,5 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 	if(!graph->edges[indx])
 		free(graph->edges[indx]);
 	graph->edges[indx] = edge;
-}
-
-
-// freeing every associated resource to specific graph
-// first surfing into every element , and freeing it
-// then freeing array of struct _edges*
-// and at the end freeing struct _graph itself
-void free_graph(struct _graph *graph){
-	g_debug("free_graph:graph->numofvertices:%d",graph->numofvertices);
-	for(int i = 0 ; i < graph->len;i++)
-		if(graph->edges[i])
-			free(graph->edges[i]);
-	g_debug("free_graph:after freeing edges element");
-	free(graph->edges);
-	graph->edges = NULL;
-	g_debug("free_graph:after freeing edge");
-	free(graph);
-	graph = NULL;
-	return;
 }
 

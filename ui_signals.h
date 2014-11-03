@@ -185,6 +185,7 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 #if !defined(ONLYUI)
 		if(graph)
 			free_graph(graph);
+		graph = NULL;
 #endif
 }
 
@@ -247,6 +248,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	g_debug("before freeing graph");
 	if(graph)
 		free_graph(graph);
+	graph = NULL;
 	g_debug("initialize graph with %d vertices",numofvertices);
 	graph = initialize(numofvertices);
         #endif

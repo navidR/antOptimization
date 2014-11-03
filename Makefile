@@ -6,6 +6,7 @@ cflags = --std=c11 -lm
 debugflag = -g -DDEBUG
 debugvariable = G_MESSAGES_DEBUG="all"
 production = -O3
+gprof-flags = -pg
 no-warning = -w
 reformatflags = -ut --linux-style
 onlyuiflags = -DONLYUI
@@ -19,6 +20,10 @@ run:
 debug:
 	gcc $(gtk_flag) $(cflags) $(no-warning) $(debugflag) -o $(output) $(src)
 	$(debugvariable) ./$(output)
+gporf:
+	gcc $(gtk_flag) $(cflags) $(no-warning) $(production) $(gprof-flags) -o $(output) $(src)
+	./$(output)
+
 debug-onlyui:
 	gcc $(onlyuiflags)  $(gtk_flag) $(cflags) $(no-warning) $(debugflag) -o $(output) $(onlyuisrc)
 	$(debugvariable) ./$(output)

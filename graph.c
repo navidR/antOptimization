@@ -17,6 +17,7 @@
 
 // handful function for turning (m,n) scheme to index scheme
 // we can optimize this func via dynamic programming technique
+// update : there is no for optimization,performance of this program dominate by cairo's draw function
 static int index(int m, int n){
 	if(m == n)
 		g_error("index:fatal error: m:%d, n:%d graph cant have loop",m,n);

@@ -22,6 +22,8 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 	cr = cairo_create(surface);
 	if (status)
 		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
+	else
+		cairo_set_source_rgb(cr, FALSE, FALSE, FALSE);
 	cairo_arc(cr, item_loc->x, item_loc->y, RADIUS, FIRST_ANGLE,
 		  SECOND_ANGLE);
 	cairo_fill(cr);
@@ -29,7 +31,7 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 	gtk_widget_queue_draw(widget);
 }
 
-static void draw_line(GtkWidget * widget)
+static void draw_line(GtkWidget * widget,gboolean status)
 {
 	cairo_t *cr;
 	g_debug("draw_line:(%d,%d)->(%d,%d)", bag.first_item->x,
@@ -38,14 +40,18 @@ static void draw_line(GtkWidget * widget)
 		g_error("draw_line:surface is null , fatal error in line:%d",
 			__LINE__);
 	cr = cairo_create(surface);
-	cairo_set_line_width(cr, LINE_WIDTH);
+	if(!status){
+		cairo_set_line_width(cr, LINE_WIDTH_UNSELECTED);
+		cairo_set_source_rgb(cr, FALSE, FALSE, FALSE);
+	}
+	else{
+		cairo_set_line_width(cr, LINE_WIDTH_SELECTED);
+		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
+	}
 	g_debug("draw_line:line width : %f", cairo_get_line_width(cr));
 	cairo_move_to(cr, bag.first_item->x, bag.first_item->y);
 	cairo_line_to(cr, bag.second_item->x, bag.second_item->y);
 	cairo_stroke(cr);
-	cairo_arc(cr, bag.first_item->x, bag.first_item->y, RADIUS, FIRST_ANGLE,
-		  SECOND_ANGLE);
-	cairo_fill(cr);
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
 }
@@ -111,7 +117,10 @@ static void visualize_graph(GtkWidget *drawing_area){
 				continue;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
-			draw_line(drawing_area);
+			if(is_selected(graph,i,j))
+				draw_line(drawing_area,TRUE);
+			else
+				draw_line(drawing_area,FALSE);
 		}
 	}
 	
@@ -260,7 +269,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			connectivity = TRUE;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
-			draw_line(drawing_area);
+			draw_line(drawing_area,FALSE);
 			#if !defined(ONLYUI)
 			// initializing graph's line
 			int distance = euclidean_distance(bag.first_item,bag.second_item);
@@ -273,7 +282,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			numofedges_drew++;
 			bag.first_item = item_loc;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, index);
-			draw_line(drawing_area);
+			draw_line(drawing_area,FALSE);
 			
 			#if !defined(ONLYUI)
 			int distance = euclidean_distance(bag.first_item,bag.second_item); // initializing graph's line
@@ -333,7 +342,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 				else {
 					bag.second_item = temp_item;
 					draw_rectangle(widget, temp_item, TRUE);
-					draw_line(widget);
+					draw_line(widget,FALSE);
 					bag.first_item = bag.second_item;
 					draw_rectangle(widget, temp_item, TRUE);
 					bag.second_item = NULL;

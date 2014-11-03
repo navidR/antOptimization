@@ -16,6 +16,7 @@
 #include "graph.h"
 
 // handful function for turning (m,n) scheme to index scheme
+// we can optimize this func via dynamic programming technique
 static int index(int m, int n){
 	if(m == n)
 		g_error("index:fatal error: m:%d, n:%d graph cant have loop",m,n);
@@ -35,7 +36,6 @@ static int index(int m, int n){
 }
 
 struct _edge* create_edge(int len, int pheromone_value){
-	g_debug("create_edge:len is %d and pheromone is %d", len, pheromone_value);
 	if(pheromone_value > MAX_PHEROMONE)
 		g_error("create_edge:phermone value is not acceptable %d",pheromone_value);
 	struct _edge* edge = malloc(sizeof(struct _edge));
@@ -49,8 +49,8 @@ void select_edge(struct _graph *graph, int m, int n, bool p_selected){
 	(graph->edges[index(m,n)])->selected = p_selected;
 }
 
-bool is_selected(struct _graph *graph, int m, int n){
-	return 	(graph->edges[index(m,n)])->selected;
+void inc_pheromone(struct _graph *graph, int m, int n){
+	(graph->edges[index(m,n)])->pheromone_value++;
 }
 
 struct _graph* initialize(int numofvertices){
@@ -72,7 +72,6 @@ struct _graph* initialize(int numofvertices){
 // then freeing array of struct _edges*
 // and at the end freeing struct _graph itself
 void free_graph(struct _graph *graph){
-	g_debug("free_graph:graph->numofvertices:%d numofedges:%d and graph->len is %d",graph->numofvertices,graph->numofedges,graph->len);
 	for(int i = 0 ; i < graph->len;i++)
 		if(graph->edges[i])
 			free(graph->edges[i]);
@@ -83,17 +82,22 @@ void free_graph(struct _graph *graph){
 	return;
 }
 // just send two index for this function
-struct _edge* is_connected(struct _graph* graph , int m, int n ){
+struct _edge* is_connected(struct _graph* graph , int m, int n){
 	if(m > graph->numofvertices || n > graph->numofvertices)
 		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
 	return graph->edges[index(m,n)];
+}
+
+bool is_selected(struct _graph* graph, int m, int n){
+	if(m > graph->numofvertices || n > graph->numofvertices)
+		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
+	return (graph->edges[index(m,n)])->selected;
 }
 
 // if you want disconnect two element
 // just send edge as null
 void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 {
-	g_debug("connect_edge:graph->len:%d,m:%d,n:%d,edge->len:%d",graph->len,m,n,edge->len);
 	if(m > graph->numofvertices || n > graph->numofvertices)
 		g_error("connect_edge:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
 	int indx = index(m,n);

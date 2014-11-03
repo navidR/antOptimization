@@ -82,7 +82,7 @@ void free_graph(struct _graph *graph){
 	graph = NULL;
 	return;
 }
-
+// just send two index for this function
 struct _edge* is_connected(struct _graph* graph , int m, int n ){
 	if(m > graph->numofvertices || n > graph->numofvertices)
 		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);

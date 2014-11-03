@@ -28,7 +28,7 @@ static int index(int m, int n){
 #ifdef DEBUG
 	// only for debugging
 	int temp = ((((m*m)-m)/2)+n);
-	g_debug("index:for (%d,%d)->%d",m,n,temp);
+	g_debug("index:for(%d,%d)->%d",m,n,temp);
 	return temp; 
 #else
 	return ((((m*m)-m)/2)+n);
@@ -36,6 +36,9 @@ static int index(int m, int n){
 }
 
 struct _edge* create_edge(int len, int pheromone_value){
+#ifdef DEBUG
+	g_debug("create_edge:len:%d",len);
+#endif	
 	if(pheromone_value > MAX_PHEROMONE)
 		g_error("create_edge:phermone value is not acceptable %d",pheromone_value);
 	struct _edge* edge = malloc(sizeof(struct _edge));
@@ -59,10 +62,14 @@ struct _graph* initialize(int numofvertices){
 	graph->numofvertices = numofvertices;
 	graph->numofedges = ZERO;
 	// we need array size of 
-	//    n^2 - n
+	//    n^2 + n
 	//   ---------- = len of array we need
 	//       2
-	graph->len = ((numofvertices * numofvertices) - numofvertices)/2;
+	// serious bug
+	graph->len = ((numofvertices * numofvertices) + numofvertices)/2;
+#ifdef DEBUG
+	g_debug("initialize:graph->len is %d",graph->len);
+#endif
 	graph->edges = calloc(graph->len, sizeof(struct _edge*));
 	return graph;
 }
@@ -72,9 +79,13 @@ struct _graph* initialize(int numofvertices){
 // then freeing array of struct _edges*
 // and at the end freeing struct _graph itself
 void free_graph(struct _graph *graph){
+	g_debug("free_graph:graph->len:%d",graph->len);
 	for(int i = 0 ; i < graph->len;i++)
-		if(graph->edges[i])
+		if(graph->edges[i] != NULL)
 			free(graph->edges[i]);
+#ifdef DEBUG
+	g_debug("free_graph:after freeing elements one by one");
+#endif
 	free(graph->edges);
 	graph->edges = NULL;
 	free(graph);
@@ -82,15 +93,27 @@ void free_graph(struct _graph *graph){
 	return;
 }
 // just send two index for this function
+// carefull if edge is not seted , this func just return's null
 struct _edge* is_connected(struct _graph* graph , int m, int n){
+	g_debug("is_connected");
 	if(m > graph->numofvertices || n > graph->numofvertices)
-		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
+		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d", m, n, graph->numofvertices);
+#ifdef DEBUG
+	g_debug("is_connected:graph->len:%d",graph->len);
+	struct _edge* edge = graph->edges[index(m,n)];
+	if(edge == NULL)
+		g_debug("is_connected:returning edge,edge is null");
+	else
+		g_debug("is_connected:returning edge,edge->len:%d",edge->len);
+	return edge;
+#else
 	return graph->edges[index(m,n)];
+#endif
 }
 
 bool is_selected(struct _graph* graph, int m, int n){
 	if(m > graph->numofvertices || n > graph->numofvertices)
-		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
+		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d", m, n, graph->numofvertices);
 	return (graph->edges[index(m,n)])->selected;
 }
 
@@ -98,12 +121,16 @@ bool is_selected(struct _graph* graph, int m, int n){
 // just send edge as null
 void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 {
+#ifdef DEBUG
+	g_debug("connect_edge:graph->numofvertices:%d,m:%d,n:%d,edge->len:%d", graph->numofvertices, m, n, edge->len);
+#endif
 	if(m > graph->numofvertices || n > graph->numofvertices)
-		g_error("connect_edge:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d",m,n,graph->numofvertices);
+		g_error("connect_edge:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d", m, n, graph->numofvertices);
 	int indx = index(m,n);
 	if(!graph->edges[indx])
 		free(graph->edges[indx]);
+	else
+		graph->numofedges++;
 	graph->edges[indx] = edge;
-	graph->numofedges++;
 }
 

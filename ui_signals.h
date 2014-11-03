@@ -1,6 +1,11 @@
 // we should minimum using global variable , and reimplement this via second parameter
 static int euclidean_distance(GdkPoint *a,GdkPoint *b)
 {
+#ifdef DEBUG
+	g_debug("in euclidean_distance function");
+	if(a == NULL || b == NULL)
+		g_error("euclidean_distance function:a or b is null");
+#endif
 	g_debug("euclidean_distance:(%d,%d)->(%d,%d)",a->x,a->y,b->x,b->y);
 	return sqrt( pow(abs(a->x - b->x) , 2 ) + pow( abs( a->y - b->y ) , 2 ) );
 }
@@ -60,6 +65,7 @@ void free_allocated(){
 	g_debug("free_allocated:ui_points->len is %d",ui_points->len);
 	bag.first_item = NULL;
 	bag.second_item = NULL;
+	bag.first_item_index = -1;
 	if(!ui_points->len)
 		return;
 	for(int i = (ui_points->len - 1); i >= 0; i--){
@@ -116,6 +122,7 @@ static void visualize_graph(GtkWidget *drawing_area){
 			if(!is_connected(graph,i,j))
 				continue;
 			bag.first_item = item_loc;
+			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
 			if(is_selected(graph,i,j))
 				draw_line(drawing_area,TRUE);
@@ -268,6 +275,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			numofedges_drew++;
 			connectivity = TRUE;
 			bag.first_item = item_loc;
+			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
 			draw_line(drawing_area,FALSE);
 			#if !defined(ONLYUI)
@@ -281,6 +289,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			int index = rand() % i;
 			numofedges_drew++;
 			bag.first_item = item_loc;
+			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, index);
 			draw_line(drawing_area,FALSE);
 			
@@ -326,9 +335,8 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 		item_loc->x = (int)event->x;
 		item_loc->y = (int)event->y;
-		for (int i = 0; i < ui_points->len; i++) {
-			GdkPoint *temp_item =
-			    g_array_index(ui_points, GdkPoint* , i);
+		for (int i = 0; i < ui_points->len; i++ ) {
+			GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
 			if (abs(item_loc->x - temp_item->x) < DISTANCE_CLICK
 			    && abs(item_loc->y - temp_item->y) < DISTANCE_CLICK) {
 				free(item_loc);
@@ -337,15 +345,44 @@ static gboolean on_button_press_event(GtkWidget * widget,
 				    && bag.second_item == NULL) {
 					draw_rectangle(widget, temp_item, TRUE);
 					bag.first_item = temp_item;
+					bag.first_item_index = i;
 				}
 				// draw line , we a have a vertex selected already
 				else {
 					bag.second_item = temp_item;
-					draw_rectangle(widget, temp_item, TRUE);
+#if !defined(ONLYUI)
+					// check it out if there is edge or not
+					// if there is edge this is memory leak and should be avoid by an if
+					if(bag.first_item_index !=i  && is_connected(graph,bag.first_item_index,i) == NULL){
+						g_debug("in_button_press_press_event:adding edge with first_index:%d,and second_index:%d",bag.first_item_index,i);
+						int distance = euclidean_distance(bag.first_item,bag.second_item);
+						g_debug("distance is :%d",distance);
+						struct _edge *edge = create_edge(distance,ZERO);
+						connect_edge(graph,bag.first_item_index,i,edge);
+						// turning second selected vertex to red
+						draw_rectangle(widget, bag.first_item, FALSE);
+						draw_line(widget,FALSE);
+						bag.first_item = bag.second_item;
+						bag.first_item_index = i;
+						draw_rectangle(widget, temp_item, TRUE);
+						bag.second_item = NULL;
+					}else{
+						// we have already edge or we select selected vertex
+						draw_rectangle(widget, bag.first_item, FALSE);
+						bag.first_item = bag.second_item;
+						bag.first_item_index = i;
+						draw_rectangle(widget, temp_item, TRUE);
+						bag.second_item = NULL;
+					}
+#else
+					// turning second selected vertex to red
+					draw_rectangle(widget, bag.first_item, FALSE);
 					draw_line(widget,FALSE);
 					bag.first_item = bag.second_item;
+					bag.first_item_index = i;
 					draw_rectangle(widget, temp_item, TRUE);
 					bag.second_item = NULL;
+#endif
 				}
 				return TRUE;
 			}
@@ -356,6 +393,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 			    ("on_button_press_event:bag.first_item is selected but second item , not select currectly");
 			draw_rectangle(widget, bag.first_item, FALSE);
 			bag.first_item = NULL;
+			bag.first_item_index = -1;
 			bag.second_item = NULL;
 			free(item_loc);
 			return TRUE;
@@ -393,4 +431,3 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 				       adjustment_input_numofedges);
 	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
-

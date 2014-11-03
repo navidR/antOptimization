@@ -33,7 +33,7 @@
 #define MAX_EVAPORATION_RATE 100
 #define INCREMENT_RATE 1
 #define LINE_WIDTH_UNSELECTED 0.75
-#define LINE_WIDTH_SELECTED 1
+#define LINE_WIDTH_SELECTED 5
 #define CLIMB_RATE 1
 
 #define MIN_PHEROMONE 0
@@ -80,6 +80,7 @@ typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
 struct _bag {
 	GdkPoint *first_item;
 	GdkPoint *second_item;
+	int first_item_index;
 } bag;
 
 // array of _points for tracking points

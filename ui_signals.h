@@ -2,7 +2,7 @@
 static int euclidean_distance(GdkPoint *a,GdkPoint *b)
 {
 #ifdef DEBUG
-	g_debug("in euclidean_distance function");
+	g_debug("euclidean_distance function");
 	if(a == NULL || b == NULL)
 		g_error("euclidean_distance function:a or b is null");
 #endif

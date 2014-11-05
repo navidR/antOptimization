@@ -1,6 +1,8 @@
 #include <stdbool.h>
-#include "graph.h"
 
+#ifndef GRAPH_H
+#include "graph.h"
+#endif
 
 struct _ant* initiate_ant(struct _graph*,int);
 void make_move(struct _graph*,struct _ant*);

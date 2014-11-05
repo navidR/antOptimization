@@ -1,5 +1,5 @@
 gtk_flag = $(shell pkg-config --cflags gtk+-3.0 --libs gtk+-3.0)
-src = ui_logic.c graph.c
+src = ui_logic.c graph.c tsp_solver.c ant.c
 onlyuisrc = ui_logic.c
 output = antGraph
 cflags = --std=c11 -lm

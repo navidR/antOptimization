@@ -1,9 +1,11 @@
 
-#include "graph.h"
+
+#ifndef ANT_H
 #include "ant.h"
+#endif
 
 struct _tsp_solver{
-	struct _ant* ants;
+	struct _ant** ants;
 	int numofants;
 };
 

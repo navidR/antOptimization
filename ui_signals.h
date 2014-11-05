@@ -433,3 +433,10 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 				       adjustment_input_numofedges);
 	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
+
+/*
+ *
+ * important point of this implementation is ui_points index directly map to graph vertices index
+ * ui_points[3] is vertex number 3 of graph implementation
+ *
+ */

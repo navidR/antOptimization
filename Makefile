@@ -13,7 +13,7 @@ onlyuiflags = -DONLYUI
 indent = indent
 reformat-src = ui_logic.c ui_logic.h ui_signals.h graph.c graph.h
 cppcheck = cppcheck
-cppcheck-flags = --enable=all -j 2 --language=c --std=c11 --verbose $(shell pkg-config --cflags-only-I gtk+-3.0)
+cppcheck-flags = --enable=all -j 2 --language=c --std=c11 --verbose $(shell pkg-config --cflags-only-I gtk+-3.0) --report-progress
 
 compile:
 	gcc $(gtk_flag) $(cflags) $(production) -o $(output) $(src)

@@ -236,11 +236,12 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 {
 	g_debug
 	    ("on_clicked_button_generating_random_graph");
-	GtkWidget *input_numofvertices, *input_numofedges, *drawing_area;
+	GtkWidget *input_numofvertices, *input_numofedges, *drawing_area,*input_evaporation_rate;
 	GtkAllocation drawing_area_alloc;
 	gint numofedges_drew = 0;
 	input_numofvertices = g_ptr_array_index(widget_array,INPUT_NUMOFVERTICES_INDEX);
 	input_numofedges = g_ptr_array_index(widget_array,INPUT_NUMOFEDGES_INDEX);
+	input_evaporation_rate = g_ptr_array_index(widget_array,INPUT_EVAPORATION_RATE_INDEX);
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	numofvertices = gtk_spin_button_get_value_as_int(input_numofvertices);
 	numofedges = gtk_spin_button_get_value_as_int(input_numofedges);
@@ -289,7 +290,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			#if !defined(ONLYUI)
 			// initializing graph's line
 			int distance = euclidean_distance(bag.first_item,bag.second_item);
-			struct _edge *edge = create_edge(distance,ZERO);
+			struct _edge *edge = create_edge(distance);
 			connect_edge(graph,i,j,edge);
 			#endif
 		}
@@ -303,21 +304,41 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			
 			#if !defined(ONLYUI)
 			int distance = euclidean_distance(bag.first_item,bag.second_item); // initializing graph's line
-			struct _edge *edge = create_edge(distance,ZERO);
+			struct _edge *edge = create_edge(distance);
 			connect_edge(graph,i,index,edge);
 			#endif
 		}
 	}
 	numofedges = numofedges_drew;
+	evaporation_rate = (graph->lenofalledges/graph->numofvertices);
+	gtk_spin_button_set_value(input_evaporation_rate,evaporation_rate);
+}
+
+static void redraw(GPtrArray *widget_array){
+	GtkWidget *drawing_area ;
+	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
+	for(int i = 0 ; i < ui_points->len ; i++){
+		for(int j = 0;j < i;j++){
+			if(is_connected(graph,i,j) != NULL){
+				bag.first_item = g_array_index(ui_points, GdkPoint* , i);
+				bag.second_item = g_array_index(ui_points, GdkPoint* ,j);
+				if(is_selected(graph,i,j))				
+					draw_line(drawing_area,TRUE);
+				else
+					draw_line(drawing_area,FALSE);
+			}
+		}
+	}
 }
 
 static void on_clicked_button_solve_problem(GtkWidget * widget,
 				GPtrArray *widget_array)
 {
-	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d",graph->numofvertices,numofants);
+	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d,evaporation_rate:%d",graph->numofvertices,numofants,evaporation_rate);
 	struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants);
-	solve_tsp(graph,tsp_solver);
+	solve_tsp(graph,tsp_solver,evaporation_rate);
 	freeing_tsp_solver(tsp_solver);
+	redraw(widget_array);
 }
 
 /*
@@ -367,7 +388,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 						g_debug("in_button_press_press_event:adding edge with first_index:%d,and second_index:%d",bag.first_item_index,i);
 						int distance = euclidean_distance(bag.first_item,bag.second_item);
 						g_debug("distance is :%d",distance);
-						struct _edge *edge = create_edge(distance,ZERO);
+						struct _edge *edge = create_edge(distance);
 						connect_edge(graph,bag.first_item_index,i,edge);
 						// turning second selected vertex to red
 						draw_rectangle(widget, bag.first_item, FALSE);
@@ -449,6 +470,12 @@ static void on_value_changed_input_numofants(GtkSpinButton *widget,
 	numofants = gtk_spin_button_get_value_as_int(widget);
 }
 
+static void on_value_chenged_evaporation_rate(GtkSpinButton *widget,
+					      gpointer data)
+{
+	g_debug("on_value_changed_input_evaporation_rate");
+	evaporation_rate = gtk_spin_button_get_value_as_int(widget);
+}
 
 /*
  *
@@ -456,4 +483,5 @@ static void on_value_changed_input_numofants(GtkSpinButton *widget,
  * ui_points[3] is vertex number 3 of graph implementation
  *
  */
+
 #endif

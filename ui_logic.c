@@ -142,6 +142,8 @@ int main(int argc, char **argv)
 	g_ptr_array_add(widget_array, drawing_area);
 	// MAINWIN_INDEX = 6
 	g_ptr_array_add(widget_array, mainwin);
+	// INPUT_EVAPORATION_RATE_INDEX = 7
+	g_ptr_array_add(widget_array, input_evaporation_rate);
 
 	// signals
 	g_signal_connect(mainwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
@@ -172,6 +174,10 @@ int main(int argc, char **argv)
 	g_signal_connect(input_numofants, EVENT_VALUE_CHANGED,
 			 G_CALLBACK(on_value_changed_input_numofants),
 			 NULL);
+	g_signal_connect(input_evaporation_rate, EVENT_VALUE_CHANGED,
+			 G_CALLBACK(on_value_chenged_evaporation_rate),
+			 NULL);
+       
 
 	// g_signal_connect(graphwin,"clicked",G_CALLBACK(graph_window_clicked),NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(graphwin),

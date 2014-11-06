@@ -6,10 +6,11 @@
 struct _tsp_solver{
 	struct _ant** ants;
 	int numofants;
+	int length_param;
 };
 
 struct _tsp_solver* init_tsp_solver(struct _graph *graph,int numofants);
 void freeing_tsp_solver(struct _tsp_solver*);
-int* solve_tsp(struct _graph*,struct _tsp_solver*);
+void solve_tsp(struct _graph*,struct _tsp_solver*,int);
 
 #endif

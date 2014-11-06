@@ -27,7 +27,8 @@
 #define GRAPHWIN_INDEX 4
 #define DRAWING_AREA_INDEX 5
 #define MAINWIN_INDEX 6
-#define MIN_NUMOFANTS 2
+#define INPUT_EVAPORATION_RATE_INDEX 7
+#define MIN_NUMOFANTS 1
 #define MAX_NUMOFANTS 500
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
@@ -93,5 +94,5 @@ static GArray *ui_points;
 static int numofvertices = MIN_NUMOFVERTICES;
 static int numofedges = MIN_NUMOFVERTICES ;
 static int numofants = MIN_NUMOFANTS;
-
+static int evaporation_rate = MIN_EVAPORATION_RATE;
 #endif

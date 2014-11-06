@@ -36,25 +36,29 @@ static int index(int m, int n){
 #endif
 }
 
-struct _edge* create_edge(int len, int pheromone_value){
+struct _edge* create_edge(int len){
 #ifdef DEBUG
 	g_debug("create_edge:len:%d",len);
 #endif	
-	if(pheromone_value > MAX_PHEROMONE)
-		g_error("create_edge:phermone value is not acceptable %d",pheromone_value);
 	struct _edge* edge = malloc(sizeof(struct _edge));
 	edge->len = len;
-	edge->pheromone_value = pheromone_value;
+	edge->pheromone_value = MIN_PHEROMONE;
 	edge->selected = false;
 	return edge;
 } 
 
 void select_edge(struct _graph *graph, int m, int n, bool p_selected){
+#ifdef DEBUG
+	g_debug("select_edge m:%d , n:%d",m,n);
+#endif
 	(graph->edges[index(m,n)])->selected = p_selected;
 }
 
-void inc_pheromone(struct _graph *graph, int m, int n){
-	(graph->edges[index(m,n)])->pheromone_value++;
+void inc_pheromone(struct _graph *graph, int m, int n, int value){
+#ifdef DEBUG
+	g_debug("inc_pheromone m:%d n:%d value:%d",m,n,value);
+#endif
+	(graph->edges[index(m,n)])->pheromone_value += value;
 }
 
 struct _graph* initialize(int numofvertices){
@@ -62,6 +66,7 @@ struct _graph* initialize(int numofvertices){
 	struct _graph* graph = malloc(sizeof(struct _graph));
 	graph->numofvertices = numofvertices;
 	graph->numofedges = ZERO;
+	graph->lenofalledges = ZERO;
 	// we need array size of 
 	//    n^2 + n
 	//   ---------- = len of array we need
@@ -132,5 +137,19 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 	else
 		graph->numofedges++;
 	graph->edges[indx] = edge;
+	graph->lenofalledges += edge->len;
 }
 
+void evaporate(struct _graph *graph,int evaporate){
+	#ifdef DEBUG
+	g_debug("evaporate: with graph->numofvertices:%d,graph->len:%d,graph->lenofalledges:%d,graph->numedges:%d,evaporate:%d",graph->numofvertices,graph->len,graph->lenofalledges,graph->numofedges,evaporate);
+	#endif
+	for(int i = 0; i < graph->len; i++){
+		if(graph->edges[i] != NULL){
+			if(graph->edges[i]->pheromone_value < evaporate)
+				graph->edges[i]->pheromone_value = MIN_PHEROMONE;
+			else
+				graph->edges[i]->pheromone_value -= evaporate;
+		}
+	}
+}

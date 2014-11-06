@@ -7,6 +7,7 @@
 #include "ui_logic.h"
 #if !defined(ONLYUI)
 #include "graph.h"
+#include "tsp_solver.h"
 #endif
 #include "ui_signals.h"
 
@@ -168,6 +169,9 @@ int main(int argc, char **argv)
 	g_signal_connect(input_numofvertices, EVENT_VALUE_CHANGED,
 			 G_CALLBACK(on_value_changed_input_numofvertices),
 			 input_numofedges);
+	g_signal_connect(input_numofants, EVENT_VALUE_CHANGED,
+			 G_CALLBACK(on_value_changed_input_numofants),
+			 NULL);
 
 	// g_signal_connect(graphwin,"clicked",G_CALLBACK(graph_window_clicked),NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(graphwin),

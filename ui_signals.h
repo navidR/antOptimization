@@ -96,6 +96,11 @@ static void clear_surface(void)
 // this function is just only for debugging purpose
 // for example in this function len of edge ignored
 // and just draw edge and vertices
+// TODO
+// not implement yet
+// just for testing purpose
+// for now we clear all drawing area and redraw all graph
+// we want check our graph Implementation
 static void visualize_graph(GtkWidget *drawing_area){
 	g_debug("visualize_graph with graph size : %d",graph->numofvertices);
 	free_allocated();
@@ -305,20 +310,22 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	numofedges = numofedges_drew;
 }
 
-static void on_clicked_button_solve_problem(GtkWidget * widget, GPtrArray *widget_array)
+static void on_clicked_button_solve_problem(GtkWidget * widget,
+				GPtrArray *widget_array)
 {
-	g_debug("clicked on problem solve button, not implemented yet");
-	// TODO
-	// not implement yet
-	// just for testing purpose
-	// for now we clear all drawing area and redraw all graph
-	// we want check our graph Implementation
-       
-#if !defined(ONLYUI)
-	GtkWidget *drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
-	visualize_graph(drawing_area);
-#endif
+	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d",graph->numofvertices,numofants);
+	struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants);
+	solve_tsp(graph,tsp_solver);
+	freeing_tsp_solver(tsp_solver);
 }
+
+/*
+ * for visualizing graph we can change solve button handler to this:
+ * #if !defined(ONLYUI)
+ * GtkWidget *drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
+ * visualize_graph(drawing_area);
+ * #endif
+*/
 
 // we send Mode as pointer in gpointer (3rd)
 static gboolean on_button_press_event(GtkWidget * widget,
@@ -433,6 +440,14 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 				       adjustment_input_numofedges);
 	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
+
+static void on_value_changed_input_numofants(GtkSpinButton *widget,
+					     gpointer data)
+{
+	g_debug("on_value_changed_input_numofants");
+	numofants = gtk_spin_button_get_value_as_int(widget);
+}
+
 
 /*
  *

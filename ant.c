@@ -1,4 +1,7 @@
+
+#ifndef ANT_H
 #include "ant.h"
+#endif
 
 // initiating a struct _ant 
 struct _ant* initiate_ant(struct _graph *graph,int current_vertex){

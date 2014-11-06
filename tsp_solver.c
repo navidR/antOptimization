@@ -1,7 +1,7 @@
 
 #include "tsp_solver.h"
 
-struct _tsp_solver* tsp_solver(struct _graph *graph,int numofants){
+struct _tsp_solver* init_tsp_solver(struct _graph *graph,int numofants){
 	// not complete implementation
 	struct _tsp_solver *tsp_solver = malloc(sizeof(struct _tsp_solver));
 	tsp_solver->ants = calloc(numofants,sizeof(struct _ants*));
@@ -24,10 +24,15 @@ void freeing_tsp_solver(struct _tsp_solver *tsp_solver){
 /*
  * should call move ant , until all ant done via one of the 
  * two following situation :
- *    an ant have done an travel via all vertices 
- *    or an ant become dead_end
+ *   -> an ant have done an travel via all vertices 
+ *   -> or an ant become dead_end
  * after all ant is done , we have our solution
+ * this will return a array of ints with (numofvertices) element
+ * which is answer for the problem
  */
-void solve_problem(struct _graph *graph,struct _tsp_solver *tsp_solver){
+int* solve_problem(struct _graph *graph,struct _tsp_solver *tsp_solver){
 	// not implemented yet
+	
+	// return answer 
+	// return ant[i]->vertex_visited;
 }

@@ -87,5 +87,7 @@ struct _bag {
 static GArray *ui_points;
 
 // main value's for graph's
-static int numofvertices = 0;
-static int numofedges = 0 ;
+static int numofvertices = MIN_NUMOFVERTICES;
+static int numofedges = MIN_NUMOFVERTICES ;
+statis int numofants = MIN_NUMOFANTS;
+

@@ -147,7 +147,7 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 	g_debug("on_toggled_button_drawing_mode");
 	free_allocated();
 	gboolean g = gtk_toggle_button_get_active(button);
-	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area, *dialog, *mainwin; 
+	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area, *mainwin; 
 	_mode *mode = g_ptr_array_index(widget_array, MODE_INDEX);
 	input_numofvertices =
 	    g_ptr_array_index(widget_array, INPUT_NUMOFVERTICES_INDEX);
@@ -157,7 +157,7 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 	mainwin = g_ptr_array_index(widget_array,MAINWIN_INDEX);
 	if (g){
 		*mode = DRAWING_MODE;
-		dialog = gtk_dialog_new_with_buttons(dialog_title,mainwin,
+		GtkWidget *dialog = gtk_dialog_new_with_buttons(dialog_title,mainwin,
 						     GTK_DIALOG_MODAL,
 						     dialog_first_button_text,
 						     GTK_RESPONSE_OK,
@@ -234,12 +234,11 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 {
 	g_debug
 	    ("on_clicked_button_generating_random_graph");
-	GtkWidget *input_numofvertices, *input_numofedges, *button_generating_random_graph, *graphwin, *drawing_area;
+	GtkWidget *input_numofvertices, *input_numofedges, *drawing_area;
 	GtkAllocation drawing_area_alloc;
 	gint numofedges_drew = 0;
 	input_numofvertices = g_ptr_array_index(widget_array,INPUT_NUMOFVERTICES_INDEX);
 	input_numofedges = g_ptr_array_index(widget_array,INPUT_NUMOFEDGES_INDEX);
-	graphwin = g_ptr_array_index(widget_array,GRAPHWIN_INDEX);
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	numofvertices = gtk_spin_button_get_value_as_int(input_numofvertices);
 	numofedges = gtk_spin_button_get_value_as_int(input_numofedges);

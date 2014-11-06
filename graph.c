@@ -90,7 +90,6 @@ void free_graph(struct _graph *graph){
 	free(graph->edges);
 	graph->edges = NULL;
 	free(graph);
-	graph = NULL;
 	return;
 }
 // just send two index for this function

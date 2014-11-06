@@ -32,5 +32,4 @@ void freeing_ant(struct _ant* ant){
 	// non-complete implementation
 	free(ant->vertex_visited);
 	free(ant);
-	ant = NULL;
 }

@@ -1,3 +1,5 @@
+#ifndef UI_SIGNALS_H
+#define UI_SIGNALS_H
 // we should minimum using global variable , and reimplement this via second parameter
 static int euclidean_distance(GdkPoint *a,GdkPoint *b)
 {
@@ -454,3 +456,4 @@ static void on_value_changed_input_numofants(GtkSpinButton *widget,
  * ui_points[3] is vertex number 3 of graph implementation
  *
  */
+#endif

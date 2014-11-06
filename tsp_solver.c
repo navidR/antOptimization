@@ -18,7 +18,6 @@ void freeing_tsp_solver(struct _tsp_solver *tsp_solver){
 		freeing_ant(tsp_solver->ants[i]);
 	free(tsp_solver->ants);
 	free(tsp_solver);
-	tsp_solver = NULL;
 }
 
 /*
@@ -30,9 +29,10 @@ void freeing_tsp_solver(struct _tsp_solver *tsp_solver){
  * this will return a array of ints with (numofvertices) element
  * which is answer for the problem
  */
-int* solve_problem(struct _graph *graph,struct _tsp_solver *tsp_solver){
+int* solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver){
 	// not implemented yet
 	
 	// return answer 
 	// return ant[i]->vertex_visited;
+	return tsp_solver->ants[0]->vertex_visited;
 }

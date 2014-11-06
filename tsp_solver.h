@@ -1,8 +1,7 @@
+#ifndef TSP_SOLVER_H
+#define TSP_SOLVER_H
 
-
-#ifndef ANT_H
 #include "ant.h"
-#endif
 
 struct _tsp_solver{
 	struct _ant** ants;
@@ -11,4 +10,6 @@ struct _tsp_solver{
 
 struct _tsp_solver* init_tsp_solver(struct _graph *graph,int numofants);
 void freeing_tsp_solver(struct _tsp_solver*);
-void solve_problem(struct _graph*,struct _tsp_solver*);
+int* solve_tsp(struct _graph*,struct _tsp_solver*);
+
+#endif

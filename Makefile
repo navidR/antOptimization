@@ -5,7 +5,7 @@ output = antGraph
 cflags = --std=c11 -lm
 debugflag = -g -DDEBUG
 debugvariable = G_MESSAGES_DEBUG="all"
-production = -O3
+production = -O3 -w
 gprof-flags = -pg
 no-warning = -w
 reformatflags = -ut --linux-style
@@ -13,7 +13,7 @@ onlyuiflags = -DONLYUI
 indent = indent
 reformat-src = ui_logic.c ui_logic.h ui_signals.h graph.c graph.h
 cppcheck = cppcheck
-cppcheck-flags = --enable=all -j 2 --language=c --std=c11 --verbose $(shell pkg-config --cflags-only-I gtk+-3.0) --report-progress
+cppcheck-flags = --enable=all --language=c --std=c11 --verbose --report-progress
 
 compile:
 	gcc $(gtk_flag) $(cflags) $(production) -o $(output) $(src)

@@ -1,6 +1,11 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 #include <glib.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
+
 
 // defines for graph
 #define MIN_PHEROMONE 0
@@ -29,3 +34,5 @@ struct _edge* create_edge(int, int );
 static int index(int,int);
 void select_edge(struct _graph*,int,int,bool);
 bool is_selected(struct _graph *, int, int);
+
+#endif

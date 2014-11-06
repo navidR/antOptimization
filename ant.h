@@ -1,8 +1,9 @@
-#include <stdbool.h>
+#ifndef ANT_H
+#define ANT_H
 
-#ifndef GRAPH_H
+#include <stdbool.h>
 #include "graph.h"
-#endif
+
 
 struct _ant* initiate_ant(struct _graph*,int);
 void make_move(struct _graph*,struct _ant*);
@@ -18,5 +19,4 @@ struct _ant{
 // we can have a pointer to graph in every ant
 // but I dont like that way
 
-
-
+#endif

@@ -1,3 +1,6 @@
+#ifndef UI_LOGIC_H
+#define UI_LOGIC_H
+
 // Defined Variable for program
 #define ZERO 0
 #define GRAPH_WIN_CONTAINER_BORDER_WIDTH 5
@@ -89,5 +92,6 @@ static GArray *ui_points;
 // main value's for graph's
 static int numofvertices = MIN_NUMOFVERTICES;
 static int numofedges = MIN_NUMOFVERTICES ;
-statis int numofants = MIN_NUMOFANTS;
+static int numofants = MIN_NUMOFANTS;
 
+#endif

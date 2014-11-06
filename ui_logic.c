@@ -120,6 +120,8 @@ int main(int argc, char **argv)
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(graphwin), frame);
 	drawing_area = gtk_drawing_area_new();
+	// enabling tooltip for drawing area
+	gtk_widget_set_has_tooltip(drawing_area,TRUE);
 	gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
 	// adding BUTTON PRESS AND MOTION MASK to gtk events
@@ -155,6 +157,7 @@ int main(int argc, char **argv)
 	g_signal_connect(drawing_area, EVENT_BUTTON_PRESS_EVENT,
 			 G_CALLBACK(on_button_press_event), &mode);
 	g_signal_connect(drawing_area, EVENT_DRAW, G_CALLBACK(on_draw), NULL);
+	g_signal_connect(drawing_area, EVENT_QUERY_TOOLTIP,G_CALLBACK(on_query_tooltip),NULL);
 	g_signal_connect(mainwin, EVENT_DELETE_EVENT,
 			 G_CALLBACK(on_delete_event), NULL);
 
@@ -177,7 +180,6 @@ int main(int argc, char **argv)
 	g_signal_connect(input_evaporation_rate, EVENT_VALUE_CHANGED,
 			 G_CALLBACK(on_value_chenged_evaporation_rate),
 			 NULL);
-       
 
 	// g_signal_connect(graphwin,"clicked",G_CALLBACK(graph_window_clicked),NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(graphwin),

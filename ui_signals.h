@@ -477,6 +477,44 @@ static void on_value_chenged_evaporation_rate(GtkSpinButton *widget,
 	evaporation_rate = gtk_spin_button_get_value_as_int(widget);
 }
 
+static gboolean on_query_tooltip(GtkWidget *widget,
+				 gint x,
+				 gint y,
+				 gboolean keyboard_mode,
+				 GtkTooltip *tooltip,
+				 gpointer data)
+{
+	GdkPoint *item_loc = malloc(sizeof(GdkPoint));
+	item_loc->x = (int)x;
+	item_loc->y = (int)y;
+	for(int i = 0 ; i < ui_points->len;i++){
+		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
+		if (abs(item_loc->x - temp_item->x) < DISTANCE_CLICK
+		    && abs(item_loc->y - temp_item->y) < DISTANCE_CLICK) {
+			if(tooltip_text != NULL){
+				free(tooltip_text);
+				tooltip_text = NULL;
+			}
+			tooltip_text = malloc(sizeof(char)*LENGTH_TOOLTIP_TEXT);
+			sprintf(tooltip_text,"Vertex Index:%d (x,y)->(%d,%d)",i,temp_item->x,temp_item->y);
+			for(int j = 0; j < NUM_SHOW_LENGTH_VIA_TOOLTIP && j < graph->numofvertices;j++){
+				if(j == i){
+					continue;
+				}
+				else if(is_connected(graph,i,j) != NULL){
+					GdkPoint *t = g_array_index(ui_points,GdkPoint*, j);
+					sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d)=>(%d,%d):L:%d",j,temp_item->x,temp_item->y,t->x,t->y,is_connected(graph,i,j)->len);
+				}
+			}
+			gtk_tooltip_set_text(tooltip,tooltip_text);
+			free(item_loc);
+			return TRUE;
+		}
+	}
+	free(item_loc);
+	return FALSE;
+}
+
 /*
  *
  * important point of this implementation is ui_points index directly map to graph vertices index

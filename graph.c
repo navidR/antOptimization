@@ -132,7 +132,7 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 	if(m > graph->numofvertices || n > graph->numofvertices)
 		g_error("connect_edge:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d", m, n, graph->numofvertices);
 	int indx = index(m,n);
-	if(!graph->edges[indx])
+	if(graph->edges[indx] != NULL)
 		free(graph->edges[indx]);
 	else
 		graph->numofedges++;
@@ -150,6 +150,15 @@ void evaporate(struct _graph *graph,int evaporate){
 				graph->edges[i]->pheromone_value = MIN_PHEROMONE;
 			else
 				graph->edges[i]->pheromone_value -= evaporate;
+		}
+	}
+}
+
+void unselect(struct _graph *graph){
+	g_debug("unselect");
+	for(int i = 0; i < graph->len; i++){
+		if(graph->edges[i] != NULL){
+			graph->edges[i]->selected = false;
 		}
 	}
 }

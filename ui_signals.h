@@ -318,6 +318,7 @@ static void redraw(GPtrArray *widget_array){
 	GtkWidget *drawing_area ;
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	for(int i = 0 ; i < ui_points->len ; i++){
+		draw_rectangle(drawing_area,g_array_index(ui_points,GdkPoint*,i) , FALSE);
 		for(int j = 0;j < i;j++){
 			if(is_connected(graph,i,j) != NULL){
 				bag.first_item = g_array_index(ui_points, GdkPoint* , i);
@@ -335,6 +336,9 @@ static void on_clicked_button_solve_problem(GtkWidget * widget,
 				GPtrArray *widget_array)
 {
 	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d,evaporation_rate:%d",graph->numofvertices,numofants,evaporation_rate);
+	unselect(graph);
+	clear_surface();
+	redraw(widget_array);
 	struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants);
 	solve_tsp(graph,tsp_solver,evaporation_rate);
 	freeing_tsp_solver(tsp_solver);
@@ -496,7 +500,7 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 				tooltip_text = NULL;
 			}
 			tooltip_text = malloc(sizeof(char)*LENGTH_TOOLTIP_TEXT);
-			sprintf(tooltip_text,"Vertex Index:%d (x,y)->(%d,%d)",i,temp_item->x,temp_item->y);
+			sprintf(tooltip_text,"V:%d (%d,%d)",i,temp_item->x,temp_item->y);
 			for(int j = 0; j < NUM_SHOW_LENGTH_VIA_TOOLTIP && j < graph->numofvertices;j++){
 				if(j == i){
 					continue;
@@ -512,6 +516,16 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 		}
 	}
 	free(item_loc);
+	if(tooltip_text != NULL){
+		free(tooltip_text);
+		tooltip_text = NULL;
+	}
+	if(graph != NULL){
+		tooltip_text = malloc(sizeof(char)*LENGTH_TOOLTIP_TEXT);
+		sprintf(tooltip_text,"Graph Statistic\nNumber of Vertices : %d\nNumber of Edges : %d\nSum of all Edges length : %d",graph->numofvertices,graph->numofedges,graph->lenofalledges);
+		gtk_tooltip_set_text(tooltip,tooltip_text);
+		return TRUE;
+	}
 	return FALSE;
 }
 

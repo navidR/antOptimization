@@ -36,5 +36,6 @@ static int index(int,int);
 void select_edge(struct _graph*,int,int,bool);
 bool is_selected(struct _graph *, int, int);
 void evaporate(struct _graph*,int);
+void unselect(struct _graph *graph);
 
 #endif

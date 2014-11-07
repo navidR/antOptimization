@@ -5,7 +5,7 @@
 #include "graph.h"
 
 
-struct _ant* initiate_ant(struct _graph*,int);
+struct _ant* initiate_ant(struct _graph*,int,bool *);
 void make_move(struct _graph*,struct _ant*);
 void freeing_ant(struct _ant*);
 bool already_taking_this_vertex(struct _ant *,int );
@@ -16,8 +16,10 @@ struct _ant{
 	int current_index;
 	int *vertex_visited; // I prefer simple array to stack
 	int len;
+	int lenofarray;
 	_going going_status;
 	bool _end;
+	bool *condition;
 };
 
 // vertex_visited index zero is started vertex

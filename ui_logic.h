@@ -20,6 +20,8 @@
 #define DISTANCE_FROM_BORDER 50
 #define DISTANCE_CLICK 10
 #define RED 0.99
+
+// widget indices
 #define MODE_INDEX 0
 #define INPUT_NUMOFVERTICES_INDEX 1
 #define INPUT_NUMOFEDGES_INDEX 2
@@ -28,17 +30,24 @@
 #define DRAWING_AREA_INDEX 5
 #define MAINWIN_INDEX 6
 #define INPUT_EVAPORATION_RATE_INDEX 7
+#define PROGRESSBAR_INDEX 8
+#define STATUS_INDEX 9
+
 #define MIN_NUMOFANTS 1
 #define MAX_NUMOFANTS 100000
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
 #define DEFAULT_NUMOFEDGES 3
 #define MIN_EVAPORATION_RATE 0.001
+#define DEFAULT_EVAPORATION_RATE 0.350
 #define MAX_EVAPORATION_RATE 0.999
 #define EVAPORATION_INCREMENT_RATE 0.001
 #define INCREMENT_RATE 1
-#define LINE_WIDTH_UNSELECTED 0.75
-#define LINE_WIDTH_SELECTED 2.25
+#define MIN_NUMOFCYCLE 100
+#define MAX_NUMOFCYCLE 1000000
+#define NUMOFCYCLE_INCREMENT_RATE 50
+#define LINE_WIDTH_UNSELECTED 1
+#define LINE_WIDTH_SELECTED 4
 #define CLIMB_RATE 1
 #define MIN_PHEROMONE 0
 #define MAX_PHEROMONE 10
@@ -70,18 +79,23 @@ const char *input_evaporation_rate_name = "input_evaporation_rate";
 const char *input_numofants_name = "input_numofants";
 const char *input_numofvertices_name = "input_numofvertices";
 const char *input_numofedges_name = "input_numofedges";
+const char *input_numofcycle_name = "input_numofcycle";
+const char *progressbar_name = "progressbar";
 const char *button_drawing_mode_name = "button_drawing_mode";
 const char *button_solve_problem_name = "button_solve_problem";
 const char *button_generating_random_graph_name =
 	"button_generating_random_graph";
 const char *dialog_title = "Number of Vertices";
 const char *dialog_first_button_text = "Ok";
+const char *button_solve_problem_text = "Solve Problem";
+const char *button_cancel_problem_text = "Cancel";
 
 // global variable
 static cairo_surface_t *surface = NULL;
 static struct _graph *graph;
 
 typedef enum { DRAWING_MODE, RANDOM_MODE } _mode;
+typedef enum { RUN, STOP} _status;
 
 // bag for keeping two item of _points
 struct _bag {
@@ -97,6 +111,10 @@ static GArray *ui_points;
 static int numofvertices = MIN_NUMOFVERTICES;
 static int numofedges = MIN_NUMOFVERTICES ;
 static int numofants = MIN_NUMOFANTS;
+static int numofcycle = MIN_NUMOFCYCLE;
+static bool condition = false;
 static double evaporation_rate = MIN_EVAPORATION_RATE;
 static char *tooltip_text;
+static int lenofanswer = ZERO;
+
 #endif

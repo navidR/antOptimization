@@ -65,6 +65,7 @@ static void draw_line(GtkWidget * widget,gboolean status)
 
 void free_allocated(){
 	g_debug("free_allocated:ui_points->len is %d",ui_points->len);
+	lenofanswer = ZERO;
 	bag.first_item = NULL;
 	bag.second_item = NULL;
 	bag.first_item_index = -1;
@@ -223,11 +224,10 @@ static gboolean on_show_event(GtkWidget * widget,
 }
 
 static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event,
-				gpointer data)
+				gpointer widget_array)
 {
 	g_debug("on_delete_event");
-	/* ask from user , if he wants really quit then return FALSE , otherwise return TRUE , OK? */
-
+	condition = false;
 	return FALSE;
 }
 
@@ -333,14 +333,30 @@ static void redraw(GPtrArray *widget_array){
 static void on_clicked_button_solve_problem(GtkWidget * widget,
 				GPtrArray *widget_array)
 {
-	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d,evaporation_rate:%d",graph->numofvertices,numofants,evaporation_rate);
-	unselect(graph);
-	clear_surface();
-	redraw(widget_array);
-	struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants);
-	solve_tsp(graph,tsp_solver,evaporation_rate);
-	freeing_tsp_solver(tsp_solver);
-	redraw(widget_array);
+//	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d,evaporation_rate:%d",graph->numofvertices,numofants,evaporation_rate);
+	
+	_status *status = g_ptr_array_index(widget_array,STATUS_INDEX);
+	GtkProgressBar *progressbar = g_ptr_array_index(widget_array,PROGRESSBAR_INDEX);
+
+	if(*status == STOP){
+		g_debug("status");
+		*status = RUN;
+		condition = true;
+		gtk_button_set_label(widget,button_cancel_problem_text);
+		gtk_widget_set_sensitive(progressbar,TRUE);
+		unselect(graph);
+		clear_surface();
+		redraw(widget_array);
+		struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants,numofcycle,&condition);
+		lenofanswer = solve_tsp(graph,tsp_solver,evaporation_rate,progressbar);
+		freeing_tsp_solver(tsp_solver);
+		redraw(widget_array);
+		gtk_widget_set_sensitive(progressbar,FALSE);
+	}
+	*status = STOP;
+	condition = false;
+	gtk_button_set_label(widget,button_solve_problem_text);
+	gtk_progress_bar_set_fraction(progressbar,ZERO);
 }
 
 /*
@@ -465,10 +481,17 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
 
+static void on_value_chenged_input_numofcycle(GtkSpinButton *widget,
+					      gpointer data)
+{
+	g_debug("on_value_chenged_input_numofcycle:numofcycle:%d",numofcycle);
+	numofcycle = gtk_spin_button_get_value_as_int(widget);
+}
+
 static void on_value_changed_input_numofants(GtkSpinButton *widget,
 					     gpointer data)
 {
-	g_debug("on_value_changed_input_numofants");
+	g_debug("on_value_changed_input_numofants:old numofants:%d",numofants);
 	numofants = gtk_spin_button_get_value_as_int(widget);
 }
 
@@ -524,6 +547,9 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 	if(graph != NULL){
 		tooltip_text = malloc(sizeof(char)*graph->numofvertices* LENGTH_TOOLTIP);
 		sprintf(tooltip_text,"Graph Statistic\nNumber of Vertices : %d\nNumber of Edges : %d\nSum of all Edges length : %d",graph->numofvertices,graph->numofedges,graph->lenofalledges);
+		if(lenofanswer != ZERO){
+			sprintf(tooltip_text + strlen(tooltip_text), "\nlength of Cycle is %d",lenofanswer);
+		}
 		gtk_tooltip_set_text(tooltip,tooltip_text);
 		return TRUE;
 	}

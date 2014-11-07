@@ -16,13 +16,17 @@
           <object class="GtkGrid" id="grid1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="margin_bottom">5</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkLabel" id="label0">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_right">46</property>
-                <property name="margin_top">14</property>
-                <property name="margin_bottom">15</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="label" translatable="yes">Generate Random Graph </property>
                 <property name="max_width_chars">10</property>
                 <property name="lines">1</property>
@@ -33,78 +37,17 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label_ant_colony_title">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">14</property>
-                <property name="margin_right">38</property>
-                <property name="margin_top">16</property>
-                <property name="margin_bottom">16</property>
-                <property name="label" translatable="yes">Ant Colony Optimization Details</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label_num_of_ant">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">15</property>
-                <property name="margin_top">15</property>
-                <property name="margin_bottom">17</property>
-                <property name="label" translatable="yes">Number Of Ants </property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">6</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="label_numofvertices">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin_left">20</property>
-                <property name="margin_right">11</property>
+                <property name="valign">center</property>
                 <property name="label" translatable="yes">Number Of Vertices </property>
                 <property name="lines">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
                 <property name="top_attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label_numofedge">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">19</property>
-                <property name="margin_right">4</property>
-                <property name="label" translatable="yes">Number Of Edge </property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">end</property>
-                <property name="margin_left">19</property>
-                <property name="margin_top">14</property>
-                <property name="margin_bottom">14</property>
-                <property name="label" translatable="yes">Drawing Graph </property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
               </packing>
             </child>
             <child>
@@ -118,15 +61,115 @@
               </packing>
             </child>
             <child>
+              <object class="GtkLabel" id="label_numofvertices1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Number Of Edges </property>
+                <property name="lines">1</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_numofvertices2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Draw Graph Mode </property>
+                <property name="lines">1</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_numofvertices3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="margin_right">15</property>
+                <property name="margin_top">20</property>
+                <property name="margin_bottom">20</property>
+                <property name="label" translatable="yes">Ant Colony Optimization Detail</property>
+                <property name="lines">1</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_numofvertices4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Number Of Ants</property>
+                <property name="lines">1</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_numofvertices5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Evaporation Rate</property>
+                <property name="lines">1</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">7</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Number Of Cycle</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Solve Problem</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">9</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToggleButton" id="button_drawing_mode">
                 <property name="label" translatable="yes">Drawing Mode for Graph Window</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="margin_left">23</property>
-                <property name="margin_right">12</property>
-                <property name="margin_top">6</property>
-                <property name="margin_bottom">7</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -137,6 +180,8 @@
               <object class="GtkSeparator" id="separator1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -144,59 +189,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label_evaporation">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="margin_left">15</property>
-                <property name="margin_top">13</property>
-                <property name="margin_bottom">18</property>
-                <property name="label" translatable="yes">Evaporation Rate in Edges </property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">7</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">15</property>
-                <property name="margin_top">9</property>
-                <property name="margin_bottom">11</property>
-                <property name="label" translatable="yes">Solve Problem</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">8</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button_solve_problem">
-                <property name="label" translatable="yes">Solve Problem</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="margin_left">70</property>
-                <property name="margin_right">71</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">9</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">8</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkSpinButton" id="input_numofvertices">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="halign">center</property>
-                <property name="margin_top">12</property>
-                <property name="margin_bottom">11</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -207,9 +207,11 @@
               <object class="GtkSpinButton" id="input_numofedges">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="halign">center</property>
-                <property name="margin_top">8</property>
-                <property name="margin_bottom">7</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -220,7 +222,11 @@
               <object class="GtkSpinButton" id="input_numofants">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -231,7 +237,11 @@
               <object class="GtkSpinButton" id="input_evaporation_rate">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="width_chars">1</property>
                 <property name="max_width_chars">5</property>
                 <property name="climb_rate">0.01</property>
@@ -248,8 +258,11 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="margin_left">25</property>
-                <property name="margin_right">10</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -257,7 +270,52 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkSpinButton" id="input_numofcycle">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_solve_problem">
+                <property name="label" translatable="yes">Solve Problem</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">9</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkProgressBar" id="progressbar">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">10</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="show_text">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
+              </packing>
             </child>
           </object>
         </child>

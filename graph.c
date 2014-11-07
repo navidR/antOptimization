@@ -56,9 +56,9 @@ void select_edge(struct _graph *graph, int m, int n, bool p_selected){
 
 void inc_pheromone(struct _graph *graph, int m, int n, double value){
 #ifdef DEBUG
-	g_debug("inc_pheromone m:%d n:%d value:%f",m,n,value);
+	g_debug("inc_pheromone graph");
 #endif
-	(graph->edges[index(m,n)])->pheromone_value += value;
+	(graph->edges[index(m,n)])->pheromone_value += (double) value;
 }
 
 struct _graph* initialize(int numofvertices){
@@ -148,7 +148,7 @@ void evaporate(struct _graph *graph,double evaporate){
 	for(int i = 0; i < graph->len; i++){
 		if(graph->edges[i] != NULL && graph->edges[i]->pheromone_value >= MIN_PHEROMONE){
 			g_debug("evaporate:graph->edges[%d]->pheromone_value = %f",i,graph->edges[i]->pheromone_value);
-			graph->edges[i]->pheromone_value *= (1 - evaporate);
+			graph->edges[i]->pheromone_value *= ((double)1 - evaporate);
 			g_debug("evaporate:new graph->edges[%d]->pheromone_value = %f",i,graph->edges[i]->pheromone_value);
 		}
 	}

@@ -3,6 +3,7 @@
 #include <glib.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 #include "ui_logic.h"
 #if !defined(ONLYUI)
@@ -21,15 +22,17 @@ int main(int argc, char **argv)
 	GtkWidget *frame_from_ui;
 	GtkRequisition *minimum_size_for_frame_ui;
 	GtkSpinButton *input_numofants, *input_numofedges, *input_numofvertices,
-	    *input_evaporation_rate;
+		*input_evaporation_rate, *input_numofcycle;
 	GtkButton *button_solve_problem, *button_generating_random_graph;
 	GtkToggleButton *button_drawing_mode;
+	GtkProgressBar *progressbar;
 	GPtrArray *widget_array;
 	GtkAdjustment *adjustment_input_numofvertices,
 	    *adjustment_input_numofants, *adjustment_evaporation_rate,
-	    *adjustment_input_numofedges;
+		*adjustment_input_numofedges, *adjustment_input_numofcycle;
 	_mode mode = RANDOM_MODE;
-
+	_status status = STOP;
+	
 #if defined(ONLYUI)
 	g_debug("main:compiled via ONLYUI flag,for debuging onlyui purpuse");
 #endif
@@ -62,18 +65,20 @@ int main(int argc, char **argv)
 	// loading objects from ui file
 	input_numofants = gtk_builder_get_object(builder, input_numofants_name);
 	input_numofedges =
-	    gtk_builder_get_object(builder, input_numofedges_name);
+		gtk_builder_get_object(builder, input_numofedges_name);
 	input_numofvertices =
 	    gtk_builder_get_object(builder, input_numofvertices_name);
 	input_evaporation_rate =
-	    gtk_builder_get_object(builder, input_evaporation_rate_name);
+		gtk_builder_get_object(builder, input_evaporation_rate_name);
+	input_numofcycle = gtk_builder_get_object(builder, input_numofcycle_name);
 	button_solve_problem =
-	    gtk_builder_get_object(builder, button_solve_problem_name);
+		gtk_builder_get_object(builder, button_solve_problem_name);
 	button_drawing_mode =
-	    gtk_builder_get_object(builder, button_drawing_mode_name);
+		gtk_builder_get_object(builder, button_drawing_mode_name);
 	button_generating_random_graph =
-	    gtk_builder_get_object(builder,
-				   button_generating_random_graph_name);
+		gtk_builder_get_object(builder,
+				       button_generating_random_graph_name);
+	progressbar = gtk_builder_get_object(builder, progressbar_name);
 
 	// setting for object loaded from ui file
 	adjustment_input_numofvertices =
@@ -88,9 +93,13 @@ int main(int argc, char **argv)
 	    gtk_adjustment_new(MIN_NUMOFANTS, MIN_NUMOFANTS, MAX_NUMOFANTS,
 			       INCREMENT_RATE, ZERO, ZERO);
 	adjustment_evaporation_rate =
-	    gtk_adjustment_new(MIN_EVAPORATION_RATE, MIN_EVAPORATION_RATE,
+	    gtk_adjustment_new(DEFAULT_EVAPORATION_RATE, MIN_EVAPORATION_RATE,
 			       MAX_EVAPORATION_RATE, EVAPORATION_INCREMENT_RATE, ZERO,
 			       ZERO);
+	adjustment_input_numofcycle =
+		gtk_adjustment_new(MIN_NUMOFCYCLE,MIN_NUMOFCYCLE,
+				   MAX_NUMOFCYCLE,NUMOFCYCLE_INCREMENT_RATE, ZERO,
+				   ZERO);
 	gtk_spin_button_set_adjustment(input_numofvertices,
 				       adjustment_input_numofvertices);
 	gtk_spin_button_set_adjustment(input_numofedges,
@@ -99,13 +108,9 @@ int main(int argc, char **argv)
 				       adjustment_input_numofants);
 	gtk_spin_button_set_adjustment(input_evaporation_rate,
 				       adjustment_evaporation_rate);
+	gtk_spin_button_set_adjustment(input_numofcycle,
+				       adjustment_input_numofcycle);
 	
-	// set intputs to defaults value
-	gtk_spin_button_set_value(input_numofvertices, MIN_NUMOFVERTICES);
-	gtk_spin_button_set_value(input_numofedges, DEFAULT_NUMOFEDGES);
-	gtk_spin_button_set_value(input_numofants, MIN_NUMOFANTS);
-	gtk_spin_button_set_value(input_evaporation_rate, MIN_EVAPORATION_RATE);
-
 	// setting some options of graphwin and mainwin
 	gtk_window_set_title(GTK_WINDOW(mainwin), mainwin_title);
 	gtk_window_set_title(GTK_WINDOW(graphwin), graphwin_title);
@@ -146,7 +151,11 @@ int main(int argc, char **argv)
 	g_ptr_array_add(widget_array, mainwin);
 	// INPUT_EVAPORATION_RATE_INDEX = 7
 	g_ptr_array_add(widget_array, input_evaporation_rate);
-
+	// PROGRESSBAR_INDEX = 8
+	g_ptr_array_add(widget_array, progressbar);
+	// STATUS_INDEX = 9
+	g_ptr_array_add(widget_array, &status);
+	
 	// signals
 	g_signal_connect(mainwin, EVENT_DESTROY, G_CALLBACK(gtk_main_quit),
 			 NULL);
@@ -160,7 +169,9 @@ int main(int argc, char **argv)
 	g_signal_connect(drawing_area, EVENT_QUERY_TOOLTIP,G_CALLBACK(on_query_tooltip),NULL);
 	g_signal_connect(mainwin, EVENT_DELETE_EVENT,
 			 G_CALLBACK(on_delete_event), NULL);
-
+	g_signal_connect(mainwin,EVENT_DELETE_EVENT,G_CALLBACK(on_delete_event),widget_array);
+	g_signal_connect(graphwin,EVENT_DELETE_EVENT,G_CALLBACK(on_delete_event),widget_array);
+	
 	// signal for object loaded from builder
 	g_signal_connect(button_drawing_mode, EVENT_TOGGLED,
 			 G_CALLBACK(on_toggled_button_drawing_mode),
@@ -179,6 +190,9 @@ int main(int argc, char **argv)
 			 NULL);
 	g_signal_connect(input_evaporation_rate, EVENT_VALUE_CHANGED,
 			 G_CALLBACK(on_value_chenged_evaporation_rate),
+			 NULL);
+	g_signal_connect(input_numofcycle, EVENT_VALUE_CHANGED,
+			 G_CALLBACK(on_value_chenged_input_numofcycle),
 			 NULL);
 
 	// g_signal_connect(graphwin,"clicked",G_CALLBACK(graph_window_clicked),NULL);

@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 			       INCREMENT_RATE, ZERO, ZERO);
 	adjustment_evaporation_rate =
 	    gtk_adjustment_new(MIN_EVAPORATION_RATE, MIN_EVAPORATION_RATE,
-			       MAX_EVAPORATION_RATE, INCREMENT_RATE, ZERO,
+			       MAX_EVAPORATION_RATE, EVAPORATION_INCREMENT_RATE, ZERO,
 			       ZERO);
 	gtk_spin_button_set_adjustment(input_numofvertices,
 				       adjustment_input_numofvertices);

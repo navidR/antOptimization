@@ -54,9 +54,9 @@ void select_edge(struct _graph *graph, int m, int n, bool p_selected){
 	(graph->edges[index(m,n)])->selected = p_selected;
 }
 
-void inc_pheromone(struct _graph *graph, int m, int n, int value){
+void inc_pheromone(struct _graph *graph, int m, int n, double value){
 #ifdef DEBUG
-	g_debug("inc_pheromone m:%d n:%d value:%d",m,n,value);
+	g_debug("inc_pheromone m:%d n:%d value:%f",m,n,value);
 #endif
 	(graph->edges[index(m,n)])->pheromone_value += value;
 }
@@ -138,18 +138,18 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 		graph->numofedges++;
 	graph->edges[indx] = edge;
 	graph->lenofalledges += edge->len;
+	g_debug("connect_edge:graph->lenofalledges:%d",graph->lenofalledges);
 }
 
-void evaporate(struct _graph *graph,int evaporate){
+void evaporate(struct _graph *graph,double evaporate){
 	#ifdef DEBUG
 	g_debug("evaporate: with graph->numofvertices:%d,graph->len:%d,graph->lenofalledges:%d,graph->numedges:%d,evaporate:%d",graph->numofvertices,graph->len,graph->lenofalledges,graph->numofedges,evaporate);
 	#endif
 	for(int i = 0; i < graph->len; i++){
-		if(graph->edges[i] != NULL){
-			if(graph->edges[i]->pheromone_value < evaporate)
-				graph->edges[i]->pheromone_value = MIN_PHEROMONE;
-			else
-				graph->edges[i]->pheromone_value -= evaporate;
+		if(graph->edges[i] != NULL && graph->edges[i]->pheromone_value >= MIN_PHEROMONE){
+			g_debug("evaporate:graph->edges[%d]->pheromone_value = %f",i,graph->edges[i]->pheromone_value);
+			graph->edges[i]->pheromone_value *= (1 - evaporate);
+			g_debug("evaporate:new graph->edges[%d]->pheromone_value = %f",i,graph->edges[i]->pheromone_value);
 		}
 	}
 }

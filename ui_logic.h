@@ -29,20 +29,21 @@
 #define MAINWIN_INDEX 6
 #define INPUT_EVAPORATION_RATE_INDEX 7
 #define MIN_NUMOFANTS 1
-#define MAX_NUMOFANTS 500
+#define MAX_NUMOFANTS 100000
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
 #define DEFAULT_NUMOFEDGES 3
-#define MIN_EVAPORATION_RATE 1
-#define MAX_EVAPORATION_RATE 100000
+#define MIN_EVAPORATION_RATE 0.001
+#define MAX_EVAPORATION_RATE 0.999
+#define EVAPORATION_INCREMENT_RATE 0.001
 #define INCREMENT_RATE 1
 #define LINE_WIDTH_UNSELECTED 0.75
 #define LINE_WIDTH_SELECTED 2.25
 #define CLIMB_RATE 1
-#define LENGTH_TOOLTIP_TEXT 1000
-#define NUM_SHOW_LENGTH_VIA_TOOLTIP 100
 #define MIN_PHEROMONE 0
-#define MAX_PHEROMONE 100
+#define MAX_PHEROMONE 10
+#define MAX_EDGE_TOOLTIP 800
+#define LENGTH_TOOLTIP 100
 
 
 // used EVENT
@@ -96,6 +97,6 @@ static GArray *ui_points;
 static int numofvertices = MIN_NUMOFVERTICES;
 static int numofedges = MIN_NUMOFVERTICES ;
 static int numofants = MIN_NUMOFANTS;
-static int evaporation_rate = MIN_EVAPORATION_RATE;
+static double evaporation_rate = MIN_EVAPORATION_RATE;
 static char *tooltip_text;
 #endif

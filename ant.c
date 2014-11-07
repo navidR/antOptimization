@@ -22,8 +22,8 @@ struct _ant* initiate_ant(struct _graph *graph,int current_vertex){
 	return ant;
 }
 
-bool already_taking_this_vertex(struct _graph *graph,struct _ant *ant,int point_vertex){
-	for(int i = 0; i < graph->numofvertices;i++)
+bool already_taking_this_vertex(struct _ant *ant,int point_vertex){
+	for(int i = 0; i < ant->current_index;i++)
 		if(ant->vertex_visited[i] == point_vertex)
 			return true;
 	return false;
@@ -61,7 +61,8 @@ void make_move(struct _graph* graph,struct _ant* ant){
 		ant->current_index--;
 		int current_vertex = ant->vertex_visited[ant->current_index];
 		int next_vertex = ant->vertex_visited[ant->current_index - 1];
-		inc_pheromone(graph,current_vertex,next_vertex,(graph->lenofalledges/ant->len));
+		g_debug("inc_pheromone via (graph->lenofalledges/ant->len):%f and graph->lenofalledges:%d ant->len:%d",((double)graph->lenofalledges/ant->len),graph->lenofalledges,ant->len);
+		inc_pheromone(graph,current_vertex,next_vertex,((double)graph->lenofalledges/ant->len));
 		if((ant->current_index-1) == 0)
 			ant->_end = true;
 #ifdef DEBUG
@@ -72,43 +73,36 @@ void make_move(struct _graph* graph,struct _ant* ant){
 		return;
 	}
 	int current_vertex = ant->vertex_visited[ant->current_index - 1];
-	int sumofpheromone = 0;
+	double sumofpheromone = 0;
 	for(int i = 0 ; i < graph->numofvertices;i++)
-		if(i == current_vertex || already_taking_this_vertex(graph,ant,i) == true)
+		if(i == current_vertex || already_taking_this_vertex(ant,i) == true)
 			continue;
 		else if(is_connected(graph,current_vertex,i) != NULL)
-			sumofpheromone += is_connected(graph,current_vertex,i)->pheromone_value;
+			sumofpheromone += ((double)is_connected(graph,current_vertex,i)->pheromone_value + 1);
 
 #ifdef DEBUG
 	g_debug("make_move:sumofpheromone:%d",sumofpheromone);
 #endif
-	if(sumofpheromone == ZERO)
-	{
-		// ant are in dead state
-#ifdef DEBUG
-		g_debug("make_move:and going to dead state via sumofpheromone:%d ,len:%d",sumofpheromone,ant->len);
-#endif
-		ant->_end = true;
-		return;
-	}
-	int chosen_pheromone = rand() % sumofpheromone;
-	int temp_pheromone = ZERO;
+
+	double rand_num = rand();
+	double chosen_pheromone = (double)rand_num - (((double)rand_num / sumofpheromone) * sumofpheromone);
+	double temp_pheromone = ZERO;
 #ifdef DEBUG
 	g_debug("make_move:ant have chosen a pheromone %d ,len:%d",chosen_pheromone,ant->len);
 #endif
 	for(int i = 0 ; i < graph->numofvertices;i++){
-		if(i == current_vertex || already_taking_this_vertex(graph,ant,i) == true)
+		if(i == current_vertex || already_taking_this_vertex(ant,i) == true)
 			continue;
 		else if(is_connected(graph,current_vertex,i) != NULL){
-			temp_pheromone += is_connected(graph,current_vertex,i)->pheromone_value;
+			temp_pheromone += ((double)is_connected(graph,current_vertex,i)->pheromone_value+1);
 			if(temp_pheromone >= chosen_pheromone){
 				// now we have chosen a vertex
 #ifdef DEBUG
-				g_debug("make_move:ant chosen  move i:%d ,len:%d",i,ant->len);
+				g_debug("make_move:ant:i:%d,len:%d,vertex->len:%d,vertex->pheromone_value:%f,temp_pheromone:%f",i,ant->len,is_connected(graph,current_vertex,i)->len,is_connected(graph,current_vertex,i)->pheromone_value,temp_pheromone);
 #endif				
 				ant->vertex_visited[ant->current_index] = i;
 				ant->current_index++;
-				ant->len += graph->edges[i]->len;
+				ant->len += is_connected(graph,current_vertex,i)->len;
 				break;
 			}
 		}

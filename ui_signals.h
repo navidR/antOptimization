@@ -310,8 +310,6 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		}
 	}
 	numofedges = numofedges_drew;
-	evaporation_rate = (graph->lenofalledges/graph->numofvertices);
-	gtk_spin_button_set_value(input_evaporation_rate,evaporation_rate);
 }
 
 static void redraw(GPtrArray *widget_array){
@@ -477,8 +475,8 @@ static void on_value_changed_input_numofants(GtkSpinButton *widget,
 static void on_value_chenged_evaporation_rate(GtkSpinButton *widget,
 					      gpointer data)
 {
-	g_debug("on_value_changed_input_evaporation_rate");
-	evaporation_rate = gtk_spin_button_get_value_as_int(widget);
+	g_debug("on_value_changed_input_evaporation_rate:old evaporation %f",evaporation_rate);	
+	evaporation_rate = gtk_spin_button_get_value(widget);
 }
 
 static gboolean on_query_tooltip(GtkWidget *widget,
@@ -488,6 +486,8 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 				 GtkTooltip *tooltip,
 				 gpointer data)
 {
+	if(graph != NULL && graph->numofedges > MAX_EDGE_TOOLTIP)
+		return FALSE;
 	GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 	item_loc->x = (int)x;
 	item_loc->y = (int)y;
@@ -499,15 +499,16 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 				free(tooltip_text);
 				tooltip_text = NULL;
 			}
-			tooltip_text = malloc(sizeof(char)*LENGTH_TOOLTIP_TEXT);
+			tooltip_text = malloc(sizeof(char)*graph->numofvertices * LENGTH_TOOLTIP);
 			sprintf(tooltip_text,"V:%d (%d,%d)",i,temp_item->x,temp_item->y);
-			for(int j = 0; j < NUM_SHOW_LENGTH_VIA_TOOLTIP && j < graph->numofvertices;j++){
+			for(int j = 0; j < graph->numofvertices;j++){
 				if(j == i){
 					continue;
 				}
 				else if(is_connected(graph,i,j) != NULL){
 					GdkPoint *t = g_array_index(ui_points,GdkPoint*, j);
-					sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d)=>(%d,%d):L:%d",j,temp_item->x,temp_item->y,t->x,t->y,is_connected(graph,i,j)->len);
+					struct _edge *edge = is_connected(graph,i,j);
+				sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d)=>(%d,%d):L:%d:P:%f",j,temp_item->x,temp_item->y,t->x,t->y,edge->len,edge->pheromone_value);
 				}
 			}
 			gtk_tooltip_set_text(tooltip,tooltip_text);
@@ -521,7 +522,7 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 		tooltip_text = NULL;
 	}
 	if(graph != NULL){
-		tooltip_text = malloc(sizeof(char)*LENGTH_TOOLTIP_TEXT);
+		tooltip_text = malloc(sizeof(char)*graph->numofvertices* LENGTH_TOOLTIP);
 		sprintf(tooltip_text,"Graph Statistic\nNumber of Vertices : %d\nNumber of Edges : %d\nSum of all Edges length : %d",graph->numofvertices,graph->numofedges,graph->lenofalledges);
 		gtk_tooltip_set_text(tooltip,tooltip_text);
 		return TRUE;

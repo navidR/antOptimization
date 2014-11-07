@@ -36,7 +36,7 @@ void freeing_tsp_solver(struct _tsp_solver *tsp_solver){
  * this will return a array of ints with (numofvertices) element
  * which is answer for the problem
  */
-void solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, int eva_value){
+void solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_value){
 #ifdef DEBUG
 	g_debug("solve_tsp with tsp_solver->numofants:%d,tsp_solver->length_param:%d",tsp_solver->numofants,tsp_solver->length_param);
 #endif
@@ -44,20 +44,18 @@ void solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, int eva_valu
 	// not implemented yet
 	// return answer 
 	// return ant[i]->vertex_visited;
-	for(int try = 0 ; try < 1000;try++){
-		while(true){
-			bool _continue = false;
-			for(int i = 0 ; i < tsp_solver->numofants;i++){
-				if(tsp_solver->ants[i]->_end == false){
-					make_move(graph,tsp_solver->ants[i]);
-					_continue = true;
-				}
+	while(true){
+		bool _continue = false;
+		for(int i = 0 ; i < tsp_solver->numofants;i++){
+			if(tsp_solver->ants[i]->_end == false){
+				make_move(graph,tsp_solver->ants[i]);
+				_continue = true;
 			}
-			// evaporate 
-			evaporate(graph,eva_value);
-			if(_continue == false)
-				break;
 		}
+		// evaporate 
+		evaporate(graph,eva_value);
+		if(_continue == false)
+			break;
 	}
 	int min_len = INT_MAX;
 	int answer_index = 0;

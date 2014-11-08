@@ -55,7 +55,7 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 					_continue = true;
 				}
 			}
-			percent += ((1/(double)graph->numofvertices) / (double) tsp_solver->numofcycle);
+			percent += ((1/(double)(tsp_solver->numofcycle+1)) / (double) (graph->numofvertices));
 			gtk_progress_bar_set_fraction(progressbar,(double)percent);
 			// evaporate
 			evaporate(graph,eva_value);
@@ -63,7 +63,7 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 				break;
 			}
 		}
-		percent = try/(double)tsp_solver->numofcycle;
+		percent = (try+1)/(double)tsp_solver->numofcycle;
 		gtk_progress_bar_set_fraction(progressbar,(double)percent);
 		while (gtk_events_pending())
 			gtk_main_iteration();

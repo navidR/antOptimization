@@ -90,14 +90,14 @@ int main(int argc, char **argv)
 	    gtk_adjustment_new(DEFAULT_NUMOFEDGES, DEFAULT_NUMOFEDGES, ZERO,
 			       ZERO, ZERO, ZERO);
 	adjustment_input_numofants =
-	    gtk_adjustment_new(MIN_NUMOFANTS, MIN_NUMOFANTS, MAX_NUMOFANTS,
+	    gtk_adjustment_new(DEFAULT_NUMOFANTS, MIN_NUMOFANTS, MAX_NUMOFANTS,
 			       INCREMENT_RATE, ZERO, ZERO);
 	adjustment_evaporation_rate =
 	    gtk_adjustment_new(DEFAULT_EVAPORATION_RATE, MIN_EVAPORATION_RATE,
 			       MAX_EVAPORATION_RATE, EVAPORATION_INCREMENT_RATE, ZERO,
 			       ZERO);
 	adjustment_input_numofcycle =
-		gtk_adjustment_new(MIN_NUMOFCYCLE,MIN_NUMOFCYCLE,
+		gtk_adjustment_new(DEFAULT_NUMOFCYCLE,MIN_NUMOFCYCLE,
 				   MAX_NUMOFCYCLE,NUMOFCYCLE_INCREMENT_RATE, ZERO,
 				   ZERO);
 	gtk_spin_button_set_adjustment(input_numofvertices,

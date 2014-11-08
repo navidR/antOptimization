@@ -1,6 +1,27 @@
 #ifndef UI_SIGNALS_H
 #define UI_SIGNALS_H
 // we should minimum using global variable , and reimplement this via second parameter
+
+
+// check if graph have
+// an vertex with only one edge
+static bool check_graph(){
+	g_debug("checking_graph");
+	for(int i = 0;i < graph->numofvertices; i++){
+		int num_connection = 0;
+		for(int j = 0; j < graph->numofvertices ; j++){
+			if(j == i)
+				continue;
+			if(is_connected(graph,i,j) != NULL)
+				num_connection++;
+		}
+		if(num_connection < 2)
+			return false;
+	}
+	return true;
+}
+
+
 static int euclidean_distance(GdkPoint *a,GdkPoint *b)
 {
 #ifdef DEBUG
@@ -23,7 +44,7 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 			   gboolean status, int num)
 {
 	cairo_t *cr;
-	g_debug("drawing here : (%d,%d) with num:%d", item_loc->x, item_loc->y,num);
+//	g_debug("drawing here : (%d,%d) with num:%d", item_loc->x, item_loc->y,num);
 	if (!surface)
 		g_error("surface is null , fatal error in line:%d", __LINE__);
 	cr = cairo_create(surface);
@@ -34,7 +55,7 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 	cairo_arc(cr, item_loc->x, item_loc->y, RADIUS, FIRST_ANGLE,
 		  SECOND_ANGLE);
 	cairo_fill(cr);
-	if(numofvertices < MAX_NUMOF_EDGES_LENGTH_WILL_SHOW){
+	if(numofvertices < MAX_NUMOF_VERTEX_WILL_SHOW){
 		int x , y;
 // x
 		if(item_loc->x > (DRAWING_AREA_WIDTH/2))
@@ -58,8 +79,7 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 static void draw_line(GtkWidget * widget,gboolean status)
 {
 	cairo_t *cr;
-	g_debug("draw_line:(%d,%d)->(%d,%d)", bag.first_item->x,
-		bag.first_item->y, bag.second_item->x, bag.second_item->y);
+//	g_debug("draw_line:(%d,%d)->(%d,%d)", bag.first_item->x,bag.first_item->y, bag.second_item->x, bag.second_item->y);
 	if (!surface)
 		g_error("draw_line:surface is null , fatal error in line:%d",
 			__LINE__);
@@ -78,7 +98,8 @@ static void draw_line(GtkWidget * widget,gboolean status)
 	cairo_stroke(cr);
 
 	// show text length
-	if(numofvertices < MAX_NUMOF_EDGES_LENGTH_WILL_SHOW){
+	if(numofvertices < MAX_NUMOF_EDGE_WILL_SHOW){
+		cairo_set_source_rgb(cr, FALSE, FALSE, FALSE);
 		cairo_move_to(cr, (bag.first_item->x + bag.second_item->x)/2, (bag.first_item->y + bag.second_item->y)/2);
 		char text[10];
 		int distance = euclidean_distance(bag.first_item,bag.second_item);
@@ -343,7 +364,7 @@ static void redraw(GPtrArray *widget_array){
 	GtkWidget *drawing_area ;
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	for(int i = 0 ; i < ui_points->len ; i++){
-		draw_rectangle(drawing_area,g_array_index(ui_points,GdkPoint*,i) , FALSE, i);
+		draw_rectangle(drawing_area,g_array_index(ui_points,GdkPoint*,i) , TRUE, i);
 		for(int j = 0;j < i;j++){
 			if(is_connected(graph,i,j) != NULL){
 				bag.first_item = g_array_index(ui_points, GdkPoint* , i);
@@ -360,6 +381,21 @@ static void redraw(GPtrArray *widget_array){
 static void on_clicked_button_solve_problem(GtkWidget * widget,
 				GPtrArray *widget_array)
 {
+	if(!check_graph()){
+		GtkWidget *mainwin = g_ptr_array_index(widget_array,MAINWIN_INDEX);
+		GtkWidget *dialog = gtk_dialog_new_with_buttons(dialog_wrong_graph_title,
+								mainwin,
+								GTK_DIALOG_MODAL,
+								dialog_first_button_text,
+								GTK_RESPONSE_OK,
+								NULL);
+		g_signal_connect_swapped(dialog,EVENT_RESPONSE,G_CALLBACK(gtk_widget_destroy),dialog);
+		GtkWidget *label = gtk_label_new(dialog_wrong_graph_text);
+		GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+		gtk_container_add(GTK_CONTAINER(content_area),label);
+		gtk_widget_show_all(dialog);
+		return;
+	}
 	_status *status = g_ptr_array_index(widget_array,STATUS_INDEX);
 	GtkProgressBar *progressbar = g_ptr_array_index(widget_array,PROGRESSBAR_INDEX);
 	if(*status == STOP){

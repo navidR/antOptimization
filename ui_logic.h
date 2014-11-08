@@ -35,6 +35,7 @@
 #define STATUS_INDEX 9
 
 #define MIN_NUMOFANTS 10
+#define DEFAULT_NUMOFANTS 100
 #define MAX_NUMOFANTS 5000
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
@@ -45,6 +46,7 @@
 #define EVAPORATION_INCREMENT_RATE 0.001
 #define INCREMENT_RATE 1
 #define MIN_NUMOFCYCLE 10
+#define DEFAULT_NUMOFCYCLE 50
 #define MAX_NUMOFCYCLE 100000
 #define NUMOFCYCLE_INCREMENT_RATE 50
 #define LINE_WIDTH_UNSELECTED 1
@@ -54,7 +56,8 @@
 #define MAX_PHEROMONE 10
 #define MAX_EDGE_TOOLTIP 900
 #define LENGTH_TOOLTIP 100
-#define MAX_NUMOF_EDGES_LENGTH_WILL_SHOW 35
+#define MAX_NUMOF_VERTEX_WILL_SHOW 15
+#define MAX_NUMOF_EDGE_WILL_SHOW 8
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
@@ -90,6 +93,8 @@ const char *dialog_title = "Number of Vertices";
 const char *dialog_first_button_text = "Ok";
 const char *button_solve_problem_text = "Solve Problem";
 const char *button_cancel_problem_text = "Cancel";
+const char *dialog_wrong_graph_title = "Error !";
+const char *dialog_wrong_graph_text = "Graph is not connected or have vertex with only one edge";
 
 // global variable
 static cairo_surface_t *surface = NULL;
@@ -111,8 +116,8 @@ static GArray *ui_points;
 // main value's for graph's
 static int numofvertices = MIN_NUMOFVERTICES;
 static int numofedges = MIN_NUMOFVERTICES ;
-static int numofants = MIN_NUMOFANTS;
-static int numofcycle = MIN_NUMOFCYCLE;
+static int numofants = DEFAULT_NUMOFANTS;
+static int numofcycle = DEFAULT_NUMOFCYCLE;
 static bool condition = false;
 static double evaporation_rate = DEFAULT_EVAPORATION_RATE;
 static char *tooltip_text;

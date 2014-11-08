@@ -56,6 +56,10 @@ bool already_taking_this_vertex(struct _ant *ant,int point_vertex){
  * then should go in _end state
  */
 void make_move(struct _graph* graph,struct _ant* ant){
+//	g_debug("make_move with:ant->len:%d, _end:%d",ant->len,ant->_end);
+//	for(int i = 0 ; i < ant->lenofarray ; i++){
+//		g_print(" ant->vertex_visited[%d] = %d\n",i,ant->vertex_visited[i]);
+//	}
 	if(ant->_end == true)
 		g_error("make_move,never should call with ant->_end true value");
 	// if current_index equal to graph->numofvertices
@@ -84,6 +88,12 @@ void make_move(struct _graph* graph,struct _ant* ant){
 			ant->len += is_connected(graph,current_vertex,ant->vertex_visited[ZERO])->len;
 			ant->going_status = RETURNING;
 			return;
+		}else{
+			ant->vertex_visited[ant->current_index] = ant->vertex_visited[ZERO];;
+			ant->current_index++;
+			ant->len += INT_MAX;
+			ant->_end = true;
+			return;
 		}
 	}
 	else{
@@ -96,19 +106,19 @@ void make_move(struct _graph* graph,struct _ant* ant){
 //			else if(is_connected(graph,current_vertex,i) != NULL){
 			else{
 				if(is_connected(graph,current_vertex,i) != NULL){
-					g_print("old sumofpheromone:%f,is_connected(graph,%d,%d)->pheremone_value is %f\n",sumofpheromone,current_vertex,i,is_connected(graph,current_vertex,i)->pheromone_value);
+//					g_print("old sumofpheromone:%f,is_connected(graph,%d,%d)->pheremone_value is %f\n",sumofpheromone,current_vertex,i,is_connected(graph,current_vertex,i)->pheromone_value);
 					sumofpheromone += (double)(is_connected(graph,current_vertex,i)->pheromone_value +(double) 1);
 				}
 				else{
-					g_debug("dont have edge , and just add 1 to sumofpheromone:%d",sumofpheromone);
+//					g_debug("dont have edge , and just add 1 to sumofpheromone:%d",sumofpheromone);
 					sumofpheromone += 1;
 				}
 			}
 		}
 		double rand_num = rand();
 		double chosen_pheromone = (double) fmod(rand_num,sumofpheromone);
-		for(int f = 0 ; f < 10 ; f++)
-			g_print("rand_num:%f, sumofpheromone:%f chosen_pheromone:%f,func_output : %f\n",rand_num,sumofpheromone,chosen_pheromone,(double) fmod(sumofpheromone,rand_num));
+//		for(int f = 0 ; f < 10 ; f++)
+//			g_print("rand_num:%f, sumofpheromone:%f chosen_pheromone:%f,func_output : %f\n",rand_num,sumofpheromone,chosen_pheromone,(double) fmod(sumofpheromone,rand_num));
 		double temp_pheromone = ZERO;
 		for(int i = 0 ; i < graph->numofvertices && (*ant->condition) != false;i++){
 			while (gtk_events_pending())
@@ -119,11 +129,10 @@ void make_move(struct _graph* graph,struct _ant* ant){
 			else{
 				// we there is edge
 				if(is_connected(graph,current_vertex,i) != NULL){
-					g_debug("have edge");
 					temp_pheromone += ((double)is_connected(graph,current_vertex,i)->pheromone_value + 1);
 					if(temp_pheromone >= chosen_pheromone){
 						// now we have chosen a vertex
-						g_print("rand_num:%f, chosen_pheromone:%f,temp_pheromone:%f\n",rand_num,chosen_pheromone,temp_pheromone);
+//						g_print("rand_num:%f, chosen_pheromone:%f,temp_pheromone:%f\n",rand_num,chosen_pheromone,temp_pheromone);
 						ant->vertex_visited[ant->current_index] = i;
 						ant->current_index++;
 						ant->len += is_connected(graph,current_vertex,i)->len;
@@ -132,11 +141,10 @@ void make_move(struct _graph* graph,struct _ant* ant){
 				}
 				// if there is no edge
 				else{
-					g_debug("dont have edge");
 					temp_pheromone += 1;
 					if(temp_pheromone >= chosen_pheromone){
 						// now we have chosen a vertex
-						g_print("rand_num:%f, chosen_pheromone:%f,temp_pheromone:%f\n",rand_num,chosen_pheromone,temp_pheromone);
+//						g_print("rand_num:%f, chosen_pheromone:%f,temp_pheromone:%f\n",rand_num,chosen_pheromone,temp_pheromone);
 						ant->vertex_visited[ant->current_index] = i;
 						ant->current_index++;
 						ant->len += INT_MAX;

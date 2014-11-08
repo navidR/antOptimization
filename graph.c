@@ -48,9 +48,9 @@ struct _edge* create_edge(int len){
 } 
 
 void select_edge(struct _graph *graph, int m, int n, bool p_selected){
-#ifdef DEBUG
-	g_debug("select_edge m:%d , n:%d",m,n);
-#endif
+//#ifdef DEBUG
+//	g_debug("select_edge m:%d , n:%d",m,n);
+//#endif
 	(graph->edges[index(m,n)])->selected = p_selected;
 }
 
@@ -86,9 +86,9 @@ void free_graph(struct _graph *graph){
 	for(int i = 0 ; i < graph->len;i++)
 		if(graph->edges[i] != NULL)
 			free(graph->edges[i]);
-#ifdef DEBUG
-	g_debug("free_graph:after freeing elements one by one");
-#endif
+//#ifdef DEBUG
+//	g_debug("free_graph:after freeing elements one by one");
+//#endif
 	free(graph->edges);
 	graph->edges = NULL;
 	free(graph);
@@ -127,21 +127,21 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 		graph->numofedges++;
 	graph->edges[indx] = edge;
 	graph->lenofalledges += edge->len;
-	g_debug("connect_edge:graph->lenofalledges:%d",graph->lenofalledges);
+//	g_debug("connect_edge:graph->lenofalledges:%d",graph->lenofalledges);
 }
 
 void evaporate(struct _graph *graph,double evaporate){
-	g_printf("=================>\n");
+//	g_printf("=================>\n");
 	for(int i = 0; i < graph->len; i++){
 		if(graph->edges[i] != NULL && graph->edges[i]->pheromone_value >= MIN_PHEROMONE)
 		{
 			double factor = ((double)1-evaporate);
-			g_print("old graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
+//			g_print("old graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
 			(graph->edges[i])->pheromone_value *= factor;
-			g_print("new graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
+//			g_print("new graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
 		}
 	}
-	g_printf("<=================\n");
+//	g_printf("<=================\n");
 }
 
 void unselect(struct _graph *graph){

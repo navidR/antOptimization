@@ -20,6 +20,7 @@
 #define DISTANCE_FROM_BORDER 50
 #define DISTANCE_CLICK 10
 #define RED 0.99
+#define TEXT_DISTANCE 15
 
 // widget indices
 #define MODE_INDEX 0
@@ -33,27 +34,27 @@
 #define PROGRESSBAR_INDEX 8
 #define STATUS_INDEX 9
 
-#define MIN_NUMOFANTS 1
-#define MAX_NUMOFANTS 100000
+#define MIN_NUMOFANTS 10
+#define MAX_NUMOFANTS 5000
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
 #define DEFAULT_NUMOFEDGES 3
 #define MIN_EVAPORATION_RATE 0.001
-#define DEFAULT_EVAPORATION_RATE 0.350
+#define DEFAULT_EVAPORATION_RATE 0.600
 #define MAX_EVAPORATION_RATE 0.999
 #define EVAPORATION_INCREMENT_RATE 0.001
 #define INCREMENT_RATE 1
-#define MIN_NUMOFCYCLE 100
-#define MAX_NUMOFCYCLE 1000000
+#define MIN_NUMOFCYCLE 10
+#define MAX_NUMOFCYCLE 100000
 #define NUMOFCYCLE_INCREMENT_RATE 50
 #define LINE_WIDTH_UNSELECTED 1
 #define LINE_WIDTH_SELECTED 4
 #define CLIMB_RATE 1
 #define MIN_PHEROMONE 0
 #define MAX_PHEROMONE 10
-#define MAX_EDGE_TOOLTIP 800
+#define MAX_EDGE_TOOLTIP 900
 #define LENGTH_TOOLTIP 100
-
+#define MAX_NUMOF_EDGES_LENGTH_WILL_SHOW 35
 
 // used EVENT
 const char *EVENT_DESTROY = "destroy";
@@ -113,7 +114,7 @@ static int numofedges = MIN_NUMOFVERTICES ;
 static int numofants = MIN_NUMOFANTS;
 static int numofcycle = MIN_NUMOFCYCLE;
 static bool condition = false;
-static double evaporation_rate = MIN_EVAPORATION_RATE;
+static double evaporation_rate = DEFAULT_EVAPORATION_RATE;
 static char *tooltip_text;
 static int lenofanswer = ZERO;
 

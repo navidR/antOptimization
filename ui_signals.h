@@ -20,10 +20,10 @@ static void on_value_changed_dialog_input_numofvertices(GtkSpinButton *widget,
 }
 
 static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
-			   gboolean status)
+			   gboolean status, int num)
 {
 	cairo_t *cr;
-	g_debug("drawing here : (%d,%d)", item_loc->x, item_loc->y);
+	g_debug("drawing here : (%d,%d) with num:%d", item_loc->x, item_loc->y,num);
 	if (!surface)
 		g_error("surface is null , fatal error in line:%d", __LINE__);
 	cr = cairo_create(surface);
@@ -34,6 +34,23 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 	cairo_arc(cr, item_loc->x, item_loc->y, RADIUS, FIRST_ANGLE,
 		  SECOND_ANGLE);
 	cairo_fill(cr);
+	if(numofvertices < MAX_NUMOF_EDGES_LENGTH_WILL_SHOW){
+		int x , y;
+// x
+		if(item_loc->x > (DRAWING_AREA_WIDTH/2))
+			x = item_loc->x + TEXT_DISTANCE;
+		else
+			x = item_loc->x - TEXT_DISTANCE;
+// y
+		if(item_loc->y > (DRAWING_AREA_HEIGHT/2))
+			y = item_loc->y + TEXT_DISTANCE;
+		else
+			y = item_loc->y - TEXT_DISTANCE;
+		cairo_move_to(cr,x,y);
+		char text[5];
+		sprintf(text,"%d",num);
+		cairo_show_text(cr , text);
+	}
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
 }
@@ -59,6 +76,15 @@ static void draw_line(GtkWidget * widget,gboolean status)
 	cairo_move_to(cr, bag.first_item->x, bag.first_item->y);
 	cairo_line_to(cr, bag.second_item->x, bag.second_item->y);
 	cairo_stroke(cr);
+
+	// show text length
+	if(numofvertices < MAX_NUMOF_EDGES_LENGTH_WILL_SHOW){
+		cairo_move_to(cr, (bag.first_item->x + bag.second_item->x)/2, (bag.first_item->y + bag.second_item->y)/2);
+		char text[10];
+		int distance = euclidean_distance(bag.first_item,bag.second_item);
+		sprintf(text,"%d",distance);
+		cairo_show_text(cr , text);
+	}
 	cairo_destroy(cr);
 	gtk_widget_queue_draw(widget);
 }
@@ -121,7 +147,7 @@ static void visualize_graph(GtkWidget *drawing_area){
 		item_loc->y = item_loc->y + DISTANCE;
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
-		draw_rectangle(drawing_area,item_loc,FALSE);
+		draw_rectangle(drawing_area,item_loc,FALSE,i);
 		// we go through 0 until ((i*m)-i)/2) = (ui_points->len)
 		// for checking if we have connected vertices
 		// for example in third row case
@@ -202,6 +228,7 @@ static gboolean on_draw(GtkWidget * widget, cairo_t * cr, gpointer data)
 	g_debug("on_draw");
 	cairo_set_source_surface(cr, surface, 0, 0);
 	cairo_paint(cr);
+	g_debug("backing from on_draw");
 	return FALSE;
 }
 
@@ -272,7 +299,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 		item_loc->y = item_loc->y + DISTANCE;
 		g_array_append_val(ui_points,item_loc);
 		// after implementing Graph interface , we should add this edge to that interface too
-		draw_rectangle(drawing_area,item_loc,FALSE);
+		draw_rectangle(drawing_area,item_loc,FALSE,i);
 		gboolean connectivity = FALSE;
 		for(int j = 0; j < (ui_points->len - 1); j++){
 			double having_edge = next_bool(probability);
@@ -316,7 +343,7 @@ static void redraw(GPtrArray *widget_array){
 	GtkWidget *drawing_area ;
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	for(int i = 0 ; i < ui_points->len ; i++){
-		draw_rectangle(drawing_area,g_array_index(ui_points,GdkPoint*,i) , FALSE);
+		draw_rectangle(drawing_area,g_array_index(ui_points,GdkPoint*,i) , FALSE, i);
 		for(int j = 0;j < i;j++){
 			if(is_connected(graph,i,j) != NULL){
 				bag.first_item = g_array_index(ui_points, GdkPoint* , i);
@@ -333,11 +360,8 @@ static void redraw(GPtrArray *widget_array){
 static void on_clicked_button_solve_problem(GtkWidget * widget,
 				GPtrArray *widget_array)
 {
-//	g_debug("clicked on problem solve button,creating tsp_solver with graph->numofvertices:%d and numofants:%d,evaporation_rate:%d",graph->numofvertices,numofants,evaporation_rate);
-	
 	_status *status = g_ptr_array_index(widget_array,STATUS_INDEX);
 	GtkProgressBar *progressbar = g_ptr_array_index(widget_array,PROGRESSBAR_INDEX);
-
 	if(*status == STOP){
 		g_debug("status");
 		*status = RUN;
@@ -392,7 +416,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 				// we dont have any vertex selected
 				if (bag.first_item == NULL
 				    && bag.second_item == NULL) {
-					draw_rectangle(widget, temp_item, TRUE);
+					draw_rectangle(widget, temp_item, TRUE,i);
 					bag.first_item = temp_item;
 					bag.first_item_index = i;
 				}
@@ -409,27 +433,27 @@ static gboolean on_button_press_event(GtkWidget * widget,
 						struct _edge *edge = create_edge(distance);
 						connect_edge(graph,bag.first_item_index,i,edge);
 						// turning second selected vertex to red
-						draw_rectangle(widget, bag.first_item, FALSE);
+						draw_rectangle(widget, bag.first_item, FALSE, bag.first_item_index);
 						draw_line(widget,FALSE);
 						bag.first_item = bag.second_item;
 						bag.first_item_index = i;
-						draw_rectangle(widget, temp_item, TRUE);
+						draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 						bag.second_item = NULL;
 					}else{
 						// we have already edge or we select selected vertex
-						draw_rectangle(widget, bag.first_item, FALSE);
+						draw_rectangle(widget, bag.first_item, FALSE , bag.first_item_index);
 						bag.first_item = bag.second_item;
 						bag.first_item_index = i;
-						draw_rectangle(widget, temp_item, TRUE);
+						draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 						bag.second_item = NULL;
 					}
 #else
 					// turning second selected vertex to red
-					draw_rectangle(widget, bag.first_item, FALSE);
+					draw_rectangle(widget, bag.first_item, FALSE, bag.first_item_index);
 					draw_line(widget,FALSE);
 					bag.first_item = bag.second_item;
 					bag.first_item_index = i;
-					draw_rectangle(widget, temp_item, TRUE);
+					draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 					bag.second_item = NULL;
 #endif
 				}
@@ -440,7 +464,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		if (bag.first_item != NULL) {
 			g_debug
 			    ("on_button_press_event:bag.first_item is selected but second item , not select currectly");
-			draw_rectangle(widget, bag.first_item, FALSE);
+			draw_rectangle(widget, bag.first_item, FALSE , bag.first_item_index);
 			bag.first_item = NULL;
 			bag.first_item_index = -1;
 			bag.second_item = NULL;
@@ -450,14 +474,14 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		// drawing rectangle only if we have allowed
 		if(numofvertices > ui_points->len)
 		{
-			draw_rectangle(widget, item_loc, FALSE);
+			g_debug("returning safely");
+			draw_rectangle(widget, item_loc, FALSE, ui_points->len);
 			g_array_append_val(ui_points, item_loc);
 			g_debug
 				("on_button_press_event:number of elements in ui_points : %d",
 				 ui_points->len);
 		}
 	}
-
 	return TRUE;
 }
 
@@ -509,12 +533,13 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 				 GtkTooltip *tooltip,
 				 gpointer data)
 {
-	if(graph != NULL && graph->numofedges > MAX_EDGE_TOOLTIP)
+	g_debug("on_query_tooltip");
+	if(graph == NULL)
 		return FALSE;
 	GdkPoint *item_loc = malloc(sizeof(GdkPoint));
 	item_loc->x = (int)x;
 	item_loc->y = (int)y;
-	for(int i = 0 ; i < ui_points->len;i++){
+	for(int i = 0 ; i < ui_points->len && graph->numofedges < MAX_EDGE_TOOLTIP;i++){
 		GdkPoint *temp_item = g_array_index(ui_points, GdkPoint* , i);
 		if (abs(item_loc->x - temp_item->x) < DISTANCE_CLICK
 		    && abs(item_loc->y - temp_item->y) < DISTANCE_CLICK) {
@@ -525,14 +550,16 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 			tooltip_text = malloc(sizeof(char)*graph->numofvertices * LENGTH_TOOLTIP);
 			sprintf(tooltip_text,"V:%d (%d,%d)",i,temp_item->x,temp_item->y);
 			for(int j = 0; j < graph->numofvertices;j++){
+				g_debug("1");
 				if(j == i){
 					continue;
 				}
 				else if(is_connected(graph,i,j) != NULL){
 					GdkPoint *t = g_array_index(ui_points,GdkPoint*, j);
 					struct _edge *edge = is_connected(graph,i,j);
-				sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d)=>(%d,%d):L:%d:P:%f",j,temp_item->x,temp_item->y,t->x,t->y,edge->len,edge->pheromone_value);
+					sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d):L:%d:P:%f",j,t->x,t->y,edge->len,edge->pheromone_value);
 				}
+				g_debug("2");
 			}
 			gtk_tooltip_set_text(tooltip,tooltip_text);
 			free(item_loc);

@@ -9,6 +9,8 @@ struct _ant* initiate_ant(struct _graph*,int,bool *);
 void make_move(struct _graph*,struct _ant*);
 void freeing_ant(struct _ant*);
 bool already_taking_this_vertex(struct _ant *,int );
+void travel_again(struct _ant *);
+
 
 typedef enum { SEARCHING, RETURNING } _going;
 

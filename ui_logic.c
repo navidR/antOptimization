@@ -45,9 +45,7 @@ int main(int argc, char **argv)
 			__LINE__);
 	// array for capsulizing information in widget_array for signal
 	widget_array = g_ptr_array_new();
-	g_debug("main:before init,line %d num of argument %d and is %s",__LINE__,argc,argv[0]);
 	gtk_init(&argc, &argv);
-	g_debug("main:after init,line %d",__LINE__);
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, mainwin_ui_name, NULL);
 	mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -202,7 +200,6 @@ int main(int argc, char **argv)
 	gtk_widget_show(mainwin);
 	gtk_widget_show_all(graphwin);
 
-	g_debug("main:going to event loop");
 	gtk_main();
 	return 0;
 }

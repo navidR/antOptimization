@@ -82,10 +82,10 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 		}
 	}
 	int *answers = tsp_solver->ants[answer_index]->vertex_visited;
-//#ifdef DEBUG
-//		for(int i = 0; i < graph->numofvertices ; i++)
-//			g_debug("solve_tsp:answer[%d]:%d",i,answers[i]);
-//#endif
+#ifdef DEBUG
+		for(int i = 0; i < graph->numofvertices ; i++)
+			g_debug("solve_tsp:answer[%d]:%d",i,answers[i]);
+#endif
 	for(int i = 0; i < graph->numofvertices;i++){
 		select_edge(graph,answers[i],answers[i+1],true);
 	}

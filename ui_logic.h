@@ -21,6 +21,7 @@
 #define DISTANCE_CLICK 10
 #define RED 0.99
 #define TEXT_DISTANCE 15
+#define TEXT_LINE_DISTANCE 5
 
 // widget indices
 #define MODE_INDEX 0
@@ -34,8 +35,9 @@
 #define PROGRESSBAR_INDEX 8
 #define STATUS_INDEX 9
 
+
 #define MIN_NUMOFANTS 10
-#define DEFAULT_NUMOFANTS 100
+#define DEFAULT_NUMOFANTS 50
 #define MAX_NUMOFANTS 5000
 #define MIN_NUMOFVERTICES 3
 #define MAX_NUMOFVERTICES 500
@@ -43,12 +45,14 @@
 #define MIN_EVAPORATION_RATE 0.001
 #define DEFAULT_EVAPORATION_RATE 0.600
 #define MAX_EVAPORATION_RATE 0.999
-#define EVAPORATION_INCREMENT_RATE 0.001
+#define EVAPORATION_INCREMENT_RATE 0.005
 #define INCREMENT_RATE 1
-#define MIN_NUMOFCYCLE 10
-#define DEFAULT_NUMOFCYCLE 50
+#define MIN_NUMOFCYCLE 1
+#define DEFAULT_NUMOFCYCLE 5
 #define MAX_NUMOFCYCLE 100000
-#define NUMOFCYCLE_INCREMENT_RATE 50
+#define NUMOFCYCLE_INCREMENT_RATE 10
+
+
 #define LINE_WIDTH_UNSELECTED 1
 #define LINE_WIDTH_SELECTED 4
 #define CLIMB_RATE 1
@@ -108,6 +112,7 @@ struct _bag {
 	GdkPoint *first_item;
 	GdkPoint *second_item;
 	int first_item_index;
+	int second_item_index;
 } bag;
 
 // array of _points for tracking points

@@ -26,14 +26,14 @@ static int index(int m, int n){
 		n ^= m;
 		m ^= n;
 	}
-//#ifdef DEBUG
-//	// only for debugging
-//	int temp = ((((m*m)-m)/2)+n);
-//	g_debug("index:for(%d,%d)->%d",m,n,temp);
-//	return temp; 
-//#else
+#ifdef DEBUG
+	// only for debugging
+	int temp = ((((m*m)-m)/2)+n);
+	g_debug("index:for(%d,%d)->%d",m,n,temp);
+	return temp; 
+#else
 	return ((((m*m)-m)/2)+n);
-//#endif
+#endif
 }
 
 struct _edge* create_edge(int len){
@@ -48,9 +48,6 @@ struct _edge* create_edge(int len){
 } 
 
 void select_edge(struct _graph *graph, int m, int n, bool p_selected){
-//#ifdef DEBUG
-//	g_debug("select_edge m:%d , n:%d",m,n);
-//#endif
 	(graph->edges[index(m,n)])->selected = p_selected;
 }
 
@@ -82,7 +79,9 @@ struct _graph* initialize(int numofvertices){
 // then freeing array of struct _edges*
 // and at the end freeing struct _graph itself
 void free_graph(struct _graph *graph){
-	g_debug("free_graph:graph->len:%d",graph->len);
+#ifdef DEBUG
+	g_debug("free_graph");
+#endif
 	for(int i = 0 ; i < graph->len;i++)
 		if(graph->edges[i] != NULL)
 			free(graph->edges[i]);
@@ -98,7 +97,9 @@ void free_graph(struct _graph *graph){
 // just send two index for this function
 // carefull if edge is not seted , this func just return's null
 struct _edge* is_connected(struct _graph* graph , int m, int n){
+#ifdef DEBUG
 	g_debug("is_connected");
+#endif
 	if(m >= graph->numofvertices || n >= graph->numofvertices)
 		g_error("is_connected:fatal error: m:%d, n:%d is not acceptable in graph->numofvertices:%d", m, n, graph->numofvertices);
 //	g_print("is_connect(graph,%d,%d)->pheromone_value is %f and with length :%d\n",m,n,graph->edges[index(m,n)]->pheromone_value,graph->edges[index(m,n)]->len);
@@ -127,21 +128,16 @@ void connect_edge(struct _graph* graph, int m, int n, struct _edge* edge)
 		graph->numofedges++;
 	graph->edges[indx] = edge;
 	graph->lenofalledges += edge->len;
-//	g_debug("connect_edge:graph->lenofalledges:%d",graph->lenofalledges);
 }
 
 void evaporate(struct _graph *graph,double evaporate){
-//	g_printf("=================>\n");
 	for(int i = 0; i < graph->len; i++){
 		if(graph->edges[i] != NULL && graph->edges[i]->pheromone_value >= MIN_PHEROMONE)
 		{
 			double factor = ((double)1-evaporate);
-//			g_print("old graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
 			(graph->edges[i])->pheromone_value *= factor;
-//			g_print("new graph->edges[%d]->pheromone_value : %f factor : %f\n with length :%d\n",i,(graph->edges[i])->pheromone_value,factor,(graph->edges[i])->len);
 		}
 	}
-//	g_printf("<=================\n");
 }
 
 void unselect(struct _graph *graph){

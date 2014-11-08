@@ -6,7 +6,9 @@
 // check if graph have
 // an vertex with only one edge
 static bool check_graph(){
+#ifdef DEBUG	
 	g_debug("checking_graph");
+#endif
 	for(int i = 0;i < graph->numofvertices; i++){
 		int num_connection = 0;
 		for(int j = 0; j < graph->numofvertices ; j++){
@@ -29,7 +31,6 @@ static int euclidean_distance(GdkPoint *a,GdkPoint *b)
 	if(a == NULL || b == NULL)
 		g_error("euclidean_distance function:a or b is null");
 #endif
-	g_debug("euclidean_distance:(%d,%d)->(%d,%d)",a->x,a->y,b->x,b->y);
 	return sqrt( pow(abs(a->x - b->x) , 2 ) + pow( abs( a->y - b->y ) , 2 ) );
 }
 
@@ -37,7 +38,9 @@ static void on_value_changed_dialog_input_numofvertices(GtkSpinButton *widget,
 							gpointer data)
 {
 	numofvertices = gtk_spin_button_get_value_as_int(widget);
+#ifdef DEBUG	
 	g_debug("on_value_changed_dialog_input_numofvertices:numofvertices is %d",numofvertices);
+#endif
 }
 
 static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
@@ -92,7 +95,6 @@ static void draw_line(GtkWidget * widget,gboolean status)
 		cairo_set_line_width(cr, LINE_WIDTH_SELECTED);
 		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
 	}
-	g_debug("draw_line:line width : %f", cairo_get_line_width(cr));
 	cairo_move_to(cr, bag.first_item->x, bag.first_item->y);
 	cairo_line_to(cr, bag.second_item->x, bag.second_item->y);
 	cairo_stroke(cr);
@@ -100,7 +102,8 @@ static void draw_line(GtkWidget * widget,gboolean status)
 	// show text length
 	if(numofvertices < MAX_NUMOF_EDGE_WILL_SHOW){
 		cairo_set_source_rgb(cr, FALSE, FALSE, FALSE);
-		cairo_move_to(cr, (bag.first_item->x + bag.second_item->x)/2, (bag.first_item->y + bag.second_item->y)/2);
+		cairo_move_to(cr, ((bag.first_item->x + bag.second_item->x)/2) + TEXT_LINE_DISTANCE,
+			      ((bag.first_item->y + bag.second_item->y)/2)+ TEXT_LINE_DISTANCE);
 		char text[10];
 		int distance = euclidean_distance(bag.first_item,bag.second_item);
 		sprintf(text,"%d",distance);
@@ -111,7 +114,9 @@ static void draw_line(GtkWidget * widget,gboolean status)
 }
 
 void free_allocated(){
+#ifdef DEBUG
 	g_debug("free_allocated:ui_points->len is %d",ui_points->len);
+#endif
 	lenofanswer = ZERO;
 	bag.first_item = NULL;
 	bag.second_item = NULL;
@@ -134,7 +139,9 @@ static gboolean next_bool(double probability)
 
 static void clear_surface(void)
 {
+#ifdef DEBUG
 	g_debug("on_clear_surface");
+#endif
 	cairo_t *cr;
 	cr = cairo_create(surface);
 	cairo_set_source_rgb(cr, RGB_SURFACE, RGB_SURFACE, RGB_SURFACE);
@@ -152,7 +159,9 @@ static void clear_surface(void)
 // for now we clear all drawing area and redraw all graph
 // we want check our graph Implementation
 static void visualize_graph(GtkWidget *drawing_area){
+#ifdef DEBUG
 	g_debug("visualize_graph with graph size : %d",graph->numofvertices);
+#endif
 	free_allocated();
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
@@ -179,6 +188,7 @@ static void visualize_graph(GtkWidget *drawing_area){
 			bag.first_item = item_loc;
 			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
+			bag.second_item_index = j;
 			if(is_selected(graph,i,j))
 				draw_line(drawing_area,TRUE);
 			else
@@ -194,7 +204,9 @@ static void visualize_graph(GtkWidget *drawing_area){
 static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 					   GPtrArray *widget_array)
 {
+#ifdef DEBUG
 	g_debug("on_toggled_button_drawing_mode");
+#endif
 	free_allocated();
 	gboolean g = gtk_toggle_button_get_active(button);
 	GtkWidget *input_numofvertices, *input_numofedges , *button_generating_random_graph, *drawing_area, *mainwin; 
@@ -228,7 +240,9 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 				 G_CALLBACK(on_value_changed_dialog_input_numofvertices),
 				 NULL);
 		int result = gtk_dialog_run(dialog);
+#ifdef DEBUG
 		g_debug("result is %d and numofvertices is %d",result,numofvertices);
+#endif
 	}
 	else
 		*mode = RANDOM_MODE;
@@ -246,18 +260,14 @@ static void on_toggled_button_drawing_mode(GtkToggleButton * button,
 
 static gboolean on_draw(GtkWidget * widget, cairo_t * cr, gpointer data)
 {
-	g_debug("on_draw");
 	cairo_set_source_surface(cr, surface, 0, 0);
 	cairo_paint(cr);
-	g_debug("backing from on_draw");
 	return FALSE;
 }
 
 static gboolean on_show_event(GtkWidget * widget,
 			      gpointer data)
 {
-	g_debug("on_configure_event");
-
 	if (surface)
 		cairo_surface_destroy(surface);
 	surface =
@@ -274,7 +284,6 @@ static gboolean on_show_event(GtkWidget * widget,
 static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event,
 				gpointer widget_array)
 {
-	g_debug("on_delete_event");
 	condition = false;
 	return FALSE;
 }
@@ -282,8 +291,6 @@ static gboolean on_delete_event(GtkWidget * widget, GdkEvent * event,
 static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 						      GPtrArray * widget_array)
 {
-	g_debug
-	    ("on_clicked_button_generating_random_graph");
 	GtkWidget *input_numofvertices, *input_numofedges, *drawing_area,*input_evaporation_rate;
 	GtkAllocation drawing_area_alloc;
 	gint numofedges_drew = 0;
@@ -293,20 +300,17 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 	drawing_area = g_ptr_array_index(widget_array,DRAWING_AREA_INDEX);
 	numofvertices = gtk_spin_button_get_value_as_int(input_numofvertices);
 	numofedges = gtk_spin_button_get_value_as_int(input_numofedges);
-	g_debug("on_clicked_button_generating_random_graph:numofvertices is %d , numofedges is %d", numofvertices, numofedges);
 	// just clear surface and re-draw
 	clear_surface();
 	gtk_widget_queue_draw(drawing_area);
 	gtk_widget_get_allocation(drawing_area,&drawing_area_alloc);
 	free_allocated();
-        #if !defined(ONLYUI)
-	g_debug("before freeing graph");
+#if !defined(ONLYUI)
 	if(graph)
 		free_graph(graph);
 	graph = NULL;
-	g_debug("initialize graph with %d vertices",numofvertices);
 	graph = initialize(numofvertices);
-        #endif
+#endif
 	srand(time(NULL));
 	double probability = (double) numofedges/((numofvertices * (numofvertices - 1)) / 2);
 	for(int i = 0; i < numofvertices; i++)
@@ -334,6 +338,7 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			bag.first_item = item_loc;
 			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, j);
+			bag.second_item_index = j;
 			draw_line(drawing_area,FALSE);
 			#if !defined(ONLYUI)
 			// initializing graph's line
@@ -348,13 +353,14 @@ static void on_clicked_button_generating_random_graph(GtkWidget * widget,
 			bag.first_item = item_loc;
 			bag.first_item_index = i;
 			bag.second_item = g_array_index(ui_points, GdkPoint*, index);
+			bag.second_item_index = index;
 			draw_line(drawing_area,FALSE);
 			
-			#if !defined(ONLYUI)
+#if !defined(ONLYUI)
 			int distance = euclidean_distance(bag.first_item,bag.second_item); // initializing graph's line
 			struct _edge *edge = create_edge(distance);
 			connect_edge(graph,i,index,edge);
-			#endif
+#endif
 		}
 	}
 	numofedges = numofedges_drew;
@@ -368,7 +374,9 @@ static void redraw(GPtrArray *widget_array){
 		for(int j = 0;j < i;j++){
 			if(is_connected(graph,i,j) != NULL){
 				bag.first_item = g_array_index(ui_points, GdkPoint* , i);
+				bag.first_item_index = i;
 				bag.second_item = g_array_index(ui_points, GdkPoint* ,j);
+				bag.second_item_index = j;
 				if(is_selected(graph,i,j))				
 					draw_line(drawing_area,TRUE);
 				else
@@ -399,7 +407,6 @@ static void on_clicked_button_solve_problem(GtkWidget * widget,
 	_status *status = g_ptr_array_index(widget_array,STATUS_INDEX);
 	GtkProgressBar *progressbar = g_ptr_array_index(widget_array,PROGRESSBAR_INDEX);
 	if(*status == STOP){
-		g_debug("status");
 		*status = RUN;
 		condition = true;
 		gtk_button_set_label(widget,button_cancel_problem_text);
@@ -431,7 +438,9 @@ static void on_clicked_button_solve_problem(GtkWidget * widget,
 static gboolean on_button_press_event(GtkWidget * widget,
 				      GdkEventButton * event, gpointer pmode)
 {
+#ifdef DEBUG
 	g_debug("on_button_press_event:(%d,%d) and ui_points->len is %d and numofvetices is %d", (int)event->x, (int)event->y, ui_points->len, numofvertices);
+#endif
 	_mode *mode = pmode;
 	if (*mode == DRAWING_MODE) {
 		// if graph is null then this is first point and we should initialize graph
@@ -459,13 +468,12 @@ static gboolean on_button_press_event(GtkWidget * widget,
 				// draw line , we a have a vertex selected already
 				else {
 					bag.second_item = temp_item;
+					bag.second_item_index = i;
 #if !defined(ONLYUI)
 					// check it out if there is edge or not
 					// if there is edge this is memory leak and should be avoid by an if
 					if(bag.first_item_index !=i  && is_connected(graph,bag.first_item_index,i) == NULL){
-						g_debug("in_button_press_press_event:adding edge with first_index:%d,and second_index:%d",bag.first_item_index,i);
 						int distance = euclidean_distance(bag.first_item,bag.second_item);
-						g_debug("distance is :%d",distance);
 						struct _edge *edge = create_edge(distance);
 						connect_edge(graph,bag.first_item_index,i,edge);
 						// turning second selected vertex to red
@@ -475,6 +483,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 						bag.first_item_index = i;
 						draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 						bag.second_item = NULL;
+						bag.second_item_index = NULL;
 					}else{
 						// we have already edge or we select selected vertex
 						draw_rectangle(widget, bag.first_item, FALSE , bag.first_item_index);
@@ -482,6 +491,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 						bag.first_item_index = i;
 						draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 						bag.second_item = NULL;
+						bag.second_item_index = NULL;
 					}
 #else
 					// turning second selected vertex to red
@@ -491,6 +501,7 @@ static gboolean on_button_press_event(GtkWidget * widget,
 					bag.first_item_index = i;
 					draw_rectangle(widget, temp_item, TRUE, bag.first_item_index);
 					bag.second_item = NULL;
+					bag.second_item_index = NULL;
 #endif
 				}
 				return TRUE;
@@ -498,24 +509,19 @@ static gboolean on_button_press_event(GtkWidget * widget,
 		}
 		// we check if we have any selected item then free item and just return
 		if (bag.first_item != NULL) {
-			g_debug
-			    ("on_button_press_event:bag.first_item is selected but second item , not select currectly");
 			draw_rectangle(widget, bag.first_item, FALSE , bag.first_item_index);
 			bag.first_item = NULL;
 			bag.first_item_index = -1;
 			bag.second_item = NULL;
+			bag.second_item_index = NULL;
 			free(item_loc);
 			return TRUE;
 		}
 		// drawing rectangle only if we have allowed
 		if(numofvertices > ui_points->len)
 		{
-			g_debug("returning safely");
 			draw_rectangle(widget, item_loc, FALSE, ui_points->len);
 			g_array_append_val(ui_points, item_loc);
-			g_debug
-				("on_button_press_event:number of elements in ui_points : %d",
-				 ui_points->len);
 		}
 	}
 	return TRUE;
@@ -530,9 +536,6 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 	int min_numofedges = gtk_spin_button_get_value_as_int(widget);
 	numofvertices = min_numofedges; // just setting numofvertices to value of input_numofvertices
 	int max_numofedges = ((min_numofedges * (min_numofedges - 1)) / 2);
-	g_debug("on_value_changed_input_numofvertices:numofvertices:%d max_numofedges:%d",
-		numofvertices,
-		max_numofedges);
 	GtkAdjustment *adjustment_input_numofedges =
 	    gtk_adjustment_new(min_numofedges, min_numofedges, max_numofedges,
 			       INCREMENT_RATE, ZERO, ZERO);
@@ -569,7 +572,6 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 				 GtkTooltip *tooltip,
 				 gpointer data)
 {
-	g_debug("on_query_tooltip");
 	if(graph == NULL)
 		return FALSE;
 	GdkPoint *item_loc = malloc(sizeof(GdkPoint));
@@ -586,7 +588,6 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 			tooltip_text = malloc(sizeof(char)*graph->numofvertices * LENGTH_TOOLTIP);
 			sprintf(tooltip_text,"V:%d (%d,%d)",i,temp_item->x,temp_item->y);
 			for(int j = 0; j < graph->numofvertices;j++){
-				g_debug("1");
 				if(j == i){
 					continue;
 				}
@@ -595,7 +596,6 @@ static gboolean on_query_tooltip(GtkWidget *widget,
 					struct _edge *edge = is_connected(graph,i,j);
 					sprintf(tooltip_text + strlen(tooltip_text),"\nV:%d:(%d,%d):L:%d:P:%f",j,t->x,t->y,edge->len,edge->pheromone_value);
 				}
-				g_debug("2");
 			}
 			gtk_tooltip_set_text(tooltip,tooltip_text);
 			free(item_loc);

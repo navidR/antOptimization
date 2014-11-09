@@ -41,3 +41,5 @@ reformat:
 	$(shell rm *~)
 cppcheck:
 	$(cppcheck) $(cppcheck-flags) $(src)
+win:
+	gcc $(no-warning) $(cflags) $(production) -o $(output) $(src) $(gtk_flag)

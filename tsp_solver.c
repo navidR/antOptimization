@@ -101,7 +101,6 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 			g_debug("solve_tsp:answer[%d]:%d",i,answers[i]);
 #endif
 	for(int i = 0; i < graph->numofvertices;i++){
-		g_print("answer_arr[%d]=%d,answer_arr[%d]=%d",i,answer_arr[i],i+1,answer_arr[i+1]);
 		select_edge(graph,answer_arr[i],answer_arr[i+1],true);
 	}
 	return min_len;

@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 			       ZERO, ZERO, ZERO);
 	adjustment_input_numofants =
 	    gtk_adjustment_new(DEFAULT_NUMOFANTS, MIN_NUMOFANTS, MAX_NUMOFANTS,
-			       INCREMENT_RATE, ZERO, ZERO);
+			       ANT_CLIMB_RATE, ZERO, ZERO);
 	adjustment_evaporation_rate =
 	    gtk_adjustment_new(DEFAULT_EVAPORATION_RATE, MIN_EVAPORATION_RATE,
 			       MAX_EVAPORATION_RATE, EVAPORATION_INCREMENT_RATE, ZERO,

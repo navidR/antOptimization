@@ -82,18 +82,22 @@ static void draw_rectangle(GtkWidget * widget, GdkPoint *item_loc,
 static void draw_line(GtkWidget * widget,gboolean status)
 {
 	cairo_t *cr;
-//	g_debug("draw_line:(%d,%d)->(%d,%d)", bag.first_item->x,bag.first_item->y, bag.second_item->x, bag.second_item->y);
+//	g_print("draw_line:(%d,%d)->(%d,%d) : numofvertices:%d\n", bag.first_item->x,bag.first_item->y, bag.second_item->x, bag.second_item->y,numofvertices);
 	if (!surface)
 		g_error("draw_line:surface is null , fatal error in line:%d",
 			__LINE__);
 	cr = cairo_create(surface);
-	if(!status){
+	if(!status && numofvertices < MAX_NUMOFVERTICES_DRAWING){
 		cairo_set_line_width(cr, LINE_WIDTH_UNSELECTED);
 		cairo_set_source_rgb(cr, FALSE, FALSE, FALSE);
 	}
-	else{
+	else if(status){
 		cairo_set_line_width(cr, LINE_WIDTH_SELECTED);
 		cairo_set_source_rgb(cr, RED, FALSE, FALSE);
+	}
+	else{
+		cairo_destroy(cr);
+		return;
 	}
 	cairo_move_to(cr, bag.first_item->x, bag.first_item->y);
 	cairo_line_to(cr, bag.second_item->x, bag.second_item->y);

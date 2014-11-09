@@ -40,10 +40,20 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 	// condition is for ui responsivnes
 	// and nothing to do with internal calculation
 	double percent = 0;
+	int *answer_arr = calloc((graph->numofvertices + 1) , sizeof(int));
+	int min_len = INT_MAX;
+//	int answer_index = INT_MAX;
+
 	for(int try = 0;try < tsp_solver->numofcycle && (*(tsp_solver->condition) != false);try++){
 		for(int i = 0 ; i < tsp_solver->numofants ; i++){
-			if(tsp_solver->ants[i]->_end == true)
-				travel_again(tsp_solver->ants[i]);
+			if(tsp_solver->ants[i]->len < min_len && tsp_solver->ants[i]->current_index == ZERO){
+				min_len = tsp_solver->ants[i]->len;
+				for(int j = 0 ; j < (graph->numofvertices + 1);j++)
+					answer_arr[j] = tsp_solver->ants[i]->vertex_visited[j];
+			}
+			// why should we need if ??
+			// if(tsp_solver->ants[i]->_end == true)
+			travel_again(tsp_solver->ants[i]);
 		}
 		while(*(tsp_solver->condition)){
 			bool _continue = false;
@@ -71,6 +81,8 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 	if(!(*(tsp_solver->condition)))
 		return;
 	gtk_progress_bar_set_fraction(progressbar,1);
+	
+	/*
 	int min_len = INT_MAX;
 	int answer_index = INT_MAX;
 	for(int i = 0 ; i < tsp_solver->numofants;i++){
@@ -82,12 +94,15 @@ int solve_tsp(struct _graph *graph,struct _tsp_solver *tsp_solver, double eva_va
 		}
 	}
 	int *answers = tsp_solver->ants[answer_index]->vertex_visited;
+	*/
+	
 #ifdef DEBUG
 		for(int i = 0; i < graph->numofvertices ; i++)
 			g_debug("solve_tsp:answer[%d]:%d",i,answers[i]);
 #endif
 	for(int i = 0; i < graph->numofvertices;i++){
-		select_edge(graph,answers[i],answers[i+1],true);
+		g_print("answer_arr[%d]=%d,answer_arr[%d]=%d",i,answer_arr[i],i+1,answer_arr[i+1]);
+		select_edge(graph,answer_arr[i],answer_arr[i+1],true);
 	}
-	return tsp_solver->ants[answer_index]->len;
+	return min_len;
 }

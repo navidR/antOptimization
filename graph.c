@@ -140,11 +140,12 @@ void evaporate(struct _graph *graph,double evaporate){
 	}
 }
 
-void unselect(struct _graph *graph){
+void clear(struct _graph *graph){
 	g_debug("unselect");
 	for(int i = 0; i < graph->len; i++){
 		if(graph->edges[i] != NULL){
 			graph->edges[i]->selected = false;
+			graph->edges[i]->pheromone_value = ZERO;
 		}
 	}
 }

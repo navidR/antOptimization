@@ -415,7 +415,7 @@ static void on_clicked_button_solve_problem(GtkWidget * widget,
 		condition = true;
 		gtk_button_set_label(widget,button_cancel_problem_text);
 		gtk_widget_set_sensitive(progressbar,TRUE);
-		unselect(graph);
+		clear(graph);
 		clear_surface();
 		redraw(widget_array);
 		struct _tsp_solver* tsp_solver =  init_tsp_solver(graph,numofants,numofcycle,&condition);

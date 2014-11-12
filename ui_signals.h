@@ -541,11 +541,10 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 	numofvertices = min_numofedges; // just setting numofvertices to value of input_numofvertices
 	int max_numofedges = ((min_numofedges * (min_numofedges - 1)) / 2);
 	GtkAdjustment *adjustment_input_numofedges =
-	    gtk_adjustment_new(min_numofedges, min_numofedges, max_numofedges,
+	    gtk_adjustment_new(max_numofedges, min_numofedges, max_numofedges,
 			       INCREMENT_RATE, ZERO, ZERO);
 	gtk_spin_button_set_adjustment(input_numofedges,
 				       adjustment_input_numofedges);
-	gtk_spin_button_set_value(input_numofedges, min_numofedges);
 }
 
 static void on_value_chenged_input_numofcycle(GtkSpinButton *widget,

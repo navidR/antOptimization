@@ -545,6 +545,7 @@ static void on_value_changed_input_numofvertices(GtkSpinButton * widget,
 			       INCREMENT_RATE, ZERO, ZERO);
 	gtk_spin_button_set_adjustment(input_numofedges,
 				       adjustment_input_numofedges);
+	gtk_spin_button_set_value(input_numofedges,max_numofedges);
 }
 
 static void on_value_chenged_input_numofcycle(GtkSpinButton *widget,

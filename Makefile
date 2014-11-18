@@ -16,12 +16,12 @@ cppcheck = cppcheck
 cppcheck-flags = --enable=all --language=c --std=c11 --verbose --report-progress
 
 compile:
-	gcc $(gtk_flag) $(cflags) $(production) -o $(output) $(src)
+	gcc -o $(output) $(src) $(gtk_flag) $(cflags) $(production)
 run:
-	gcc $(gtk_flag) $(cflags) $(production) -o $(output) $(src)
+	gcc -o $(output) $(src) $(gtk_flag) $(cflags) $(production)
 	./$(output)
 debug:
-	gcc $(gtk_flag) $(cflags) $(no-warning) $(debugflag) -o $(output) $(src)
+	gcc -o $(output) $(src) $(gtk_flag) $(cflags) $(no-warning) $(debugflag)
 	$(debugvariable) ./$(output)
 gporf:
 	gcc $(gtk_flag) $(cflags) $(no-warning) $(production) $(gprof-flags) -o $(output) $(src)

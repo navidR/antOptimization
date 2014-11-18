@@ -98,16 +98,30 @@ int main(int argc, char **argv)
 		gtk_adjustment_new(DEFAULT_NUMOFCYCLE,MIN_NUMOFCYCLE,
 				   MAX_NUMOFCYCLE,NUMOFCYCLE_INCREMENT_RATE, ZERO,
 				   ZERO);
+	// input_numofvertices
 	gtk_spin_button_set_adjustment(input_numofvertices,
 				       adjustment_input_numofvertices);
+	gtk_spin_button_set_value(input_numofvertices,MIN_NUMOFVERTICES);
+	
+	// input_numofedges
 	gtk_spin_button_set_adjustment(input_numofedges,
 				       adjustment_input_numofedges);
+	gtk_spin_button_set_value(input_numofedges,DEFAULT_NUMOFEDGES);
+
+	// input_numofants
 	gtk_spin_button_set_adjustment(input_numofants,
 				       adjustment_input_numofants);
+	gtk_spin_button_set_value(input_numofants,DEFAULT_NUMOFANTS);
+
+	// input_evaporation_rate
 	gtk_spin_button_set_adjustment(input_evaporation_rate,
 				       adjustment_evaporation_rate);
+	gtk_spin_button_set_value(input_evaporation_rate,DEFAULT_EVAPORATION_RATE);
+	
+	// input_numofcycle
 	gtk_spin_button_set_adjustment(input_numofcycle,
 				       adjustment_input_numofcycle);
+	gtk_spin_button_set_value(input_numofcycle,DEFAULT_NUMOFCYCLE);
 	
 	// setting some options of graphwin and mainwin
 	gtk_window_set_title(GTK_WINDOW(mainwin), mainwin_title);
